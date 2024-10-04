@@ -10,13 +10,15 @@
                     <div class="content_single-product-nouser">
                         <div class="row">
                             {% for order in orders %}
+                                {% if order.status != order.Type.BEKOR_QILINDI and order.status != order.Type.YETKAZIB_BERILDI %}
 
-                                <div class="col-md-4 p-5">
-                                    <h3>Mahsulot: {{ order.product.name }}</h3>  <!-- Access product name -->
-                                    <small>Mahsulot narxi: {{ order.price }}</small>
-                                    <!-- Access product price -->
-                                    <p>Soni: 1</p>
-                                </div>
+                                    <div class="col-md-4 p-5">
+                                        <h3>Mahsulot: {{ order.product.name }}</h3>  <!-- Access product name -->
+                                        <small>Mahsulot narxi: {{ order.price }}</small>
+                                        <!-- Access product price -->
+                                        <p>Soni: 1</p>
+                                    </div>
+                                {% endif %}
                             {% endfor %}
                         </div>
                     </div>

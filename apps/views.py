@@ -1,77 +1,23 @@
 from datetime import timedelta
 
 from django.contrib import messages
-from django.contrib.auth import login, logout, update_session_auth_hash
+from django.contrib.auth import login, logout
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth.views import LoginView
 from django.core.exceptions import ValidationError
-from django.db.models import Q, Count
+from django.db.models import Q, Count, F, Sum
 from django.http import JsonResponse
-from django.shortcuts import redirect
+from django.shortcuts import redirect, render
 from django.urls import reverse_lazy
 from django.utils.timezone import now
 from django.views import View
 from django.views.generic import ListView, DetailView, UpdateView, CreateView, TemplateView
 
-from apps.forms import CustomAuthenticationForm, CreateOrderForm, ChangePasswordModelForm, ProfileUpdateForm, \
-    StreamCreateForm
-from apps.models import Product, Category, User, Region, District, Order, Stream
+from apps.forms import CustomAuthenticationForm, CreateOrderForm, ChangePasswordModelForm, StreamCreateForm
+from apps.models import Product, Category, User, Region, District, Order, Stream, Concurs
 
-
-class AllProductListView(ListView):
-    template_name = 'apps/shop/all_products.html'
-    context_object_name = 'products'
-    paginate_by = 10
-
-    def get_queryset(self):
-        ctx = Product.objects.all()
-        slug = self.kwargs.get('slug')
-        name = self.request.GET.get('name')
-
-        if name:
-            ctx = ctx.filter(Q(name__icontains=name) | Q(description__icontains=name))
-        if slug:
-            ctx = ctx.filter(category__slug=slug)
-        return ctx
-
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        context['categories'] = Category.objects.all()
-        return context
-
-
-class ProductListView(ListView):
-    template_name = 'apps/shop/product-list.html'
-    context_object_name = 'products'
-    paginate_by = 10
-
-    def get_queryset(self):
-        ctx = Product.objects.all()
-
-        slug = self.kwargs.get('slug')
-
-        if slug:
-            ctx = ctx.filter(category__slug=slug)
-
-        return ctx
-
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        context['categories'] = Category.objects.all()
-        return context
-
-
-class ProductDetailView(DetailView, CreateView):
-    model = Product
-    form_class = CreateOrderForm
-    template_name = 'apps/shop/product-detail.html'
-    context_object_name = 'product'
-
-    def form_valid(self, form):
-        order = form.save()
-        if len(form.cleaned_data['phone']) != 12:
-            raise ValidationError('number must be 12 in length')
-        return redirect('order_detail', pk=order.pk)
+# ==================================================================================================================================================
+'''User View'''
 
 
 class CustomLoginView(LoginView):
@@ -139,6 +85,66 @@ class DistrictListView(View):
         return JsonResponse([], safe=False)
 
 
+# ==================================================================================================================================================
+'''Shop View'''
+
+
+class AllProductListView(ListView):
+    template_name = 'apps/shop/all_products.html'
+    context_object_name = 'products'
+    paginate_by = 10
+
+    def get_queryset(self):
+        ctx = Product.objects.all()
+        slug = self.kwargs.get('slug')
+        name = self.request.GET.get('name')
+
+        if name:
+            ctx = ctx.filter(Q(name__icontains=name) | Q(description__icontains=name))
+        if slug:
+            ctx = ctx.filter(category__slug=slug)
+        return ctx
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['categories'] = Category.objects.all()
+        return context
+
+
+class ProductListView(ListView):
+    template_name = 'apps/shop/product-list.html'
+    context_object_name = 'products'
+    paginate_by = 10
+
+    def get_queryset(self):
+        ctx = Product.objects.all()
+
+        slug = self.kwargs.get('slug')
+
+        if slug:
+            ctx = ctx.filter(category__slug=slug)
+
+        return ctx
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['categories'] = Category.objects.all()
+        return context
+
+
+class ProductDetailView(DetailView, CreateView):
+    model = Product
+    form_class = CreateOrderForm
+    template_name = 'apps/shop/product-detail.html'
+    context_object_name = 'product'
+
+    def form_valid(self, form):
+        order = form.save()
+        if len(form.cleaned_data['phone']) != 12:
+            raise ValidationError('number must be 12 in length')
+        return redirect('order_detail', pk=order.pk)
+
+
 class OrderListView(LoginRequiredMixin, ListView):
     model = Order
     template_name = 'apps/order/order_list.html'
@@ -153,6 +159,14 @@ class OrderDetailView(DetailView):
     queryset = Order.objects.all()
     template_name = 'apps/order/success.html'
     # context_object_name = 'order'
+
+
+# ==================================================================================================================================================
+'''Admin Page View'''
+
+
+class AdminPageTemplateView(TemplateView):
+    template_name = 'apps/admin_page/admin_page.html'
 
 
 class MarketView(ListView):
@@ -238,10 +252,6 @@ class StatisticProductDetailView(DetailView):
         return ctx
 
 
-class AdminPageTemplateView(TemplateView):
-    template_name = 'apps/admin_page/admin_page.html'
-
-
 class StreamStatisticsListView(ListView):
     model = Stream
     template_name = 'apps/admin_page/stream_statics.html'
@@ -260,11 +270,28 @@ class StreamStatisticsListView(ListView):
         elif period == 'monthly':
             qs = qs.filter(orders__created_at__gte=now() - timedelta(30))
 
-        return qs
+        qs = qs.annotate(
+            yangi=Count('orders', Q(orders__status='yangi') & Q(orders__stream_id=F('id'))),
+            tayyor=Count('orders', Q(orders__status='tayyor') & Q(orders__stream_id=F('id'))),
+            yetkazilmoqda=Count('orders', Q(orders__status='yetkazilmoqda') & Q(orders__stream_id=F('id'))),
+            yetkazib_berildi=Count('orders', Q(orders__status='yetkazib_berildi') & Q(orders__stream_id=F('id'))),
+            telefon_kotarmadi=Count('orders', Q(orders__status='telefon_kotarmadi') & Q(orders__stream_id=F('id'))),
+            bekor_qilindi=Count('orders', Q(orders__status='bekor_qilindi') & Q(orders__stream_id=F('id'))),
+            arxivlandi=Count('orders', Q(orders__status='arxivlandi') & Q(orders__stream_id=F('id'))),
+        )
+        qs.aggregates = qs.aggregate(
+            total_tashrif=Sum('tashrif'),
+            total_yangi=Sum('yangi'),
+            total_tayyor=Sum('tayyor'),
+            total_yetkazilmoqda=Sum('yetkazilmoqda'),
+            total_yetkazib_berildi=Sum('yetkazib_berildi'),
+            total_telefon_kotarmadi=Sum('telefon_kotarmadi'),
+            total_bekor_qilindi=Sum('bekor_qilindi'),
+            total_arxivlandi=Sum('arxivlandi')
 
-    def get_context_data(self, *, object_list=None, **kwargs):
-        ctx = super().get_context_data(**kwargs)
-        ctx['products'] = Product.objects.all()
+        )
+
+        return qs
 
 
 class RequestTemplateView(TemplateView):
@@ -274,10 +301,45 @@ class RequestTemplateView(TemplateView):
 class ConcursTemplateView(TemplateView):
     template_name = 'apps/admin_page/concurs.html'
 
+    def get_context_data(self, **kwargs):
+        ctx = super().get_context_data(**kwargs)
+        ctx['concurs'] = Concurs.objects.filter(is_started=True)
+        ctx['users'] = User.objects.filter(orders__status='yetkazib_berildi').annotate(count=Count('orders')).values(
+            'first_name', 'last_name', 'count').order_by('-count')
+        return ctx
+
 
 class TolovTemplateView(TemplateView):
     template_name = 'apps/admin_page/tolov.html'
 
 
-class DiagramsTemplateView(TemplateView):
+class DiagramsView(View):
+    print('Diagram ishladi')
     template_name = 'apps/admin_page/diagrams.html'
+
+    def get(self, request):
+        count_order = Order.objects.count()
+        product_count = Product.objects.count()
+
+        status_data_order = (
+            Order.objects.values('status').annotate(count=Count('id'))
+        )
+
+        region_data = (
+            Order.objects.values('region__name').annotate(count=Count('id'))
+        )
+
+        product_data = (
+            Order.objects.values('product__name').annotate(count=Count('id'))
+        )
+
+        context = {
+            'order_count': count_order,
+            'product_count': product_count,
+            'order_status_data': status_data_order,
+            'region_data': region_data,
+            'product_data': product_data
+
+        }
+
+        return render(request, 'apps/admin_page/diagrams.html', context)

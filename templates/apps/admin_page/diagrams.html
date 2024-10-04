@@ -1,19 +1,114 @@
 {% extends 'apps/base.html' %}
 
 {% block base %}
-	<div class="card mb-3">
-    <div class="card-body">
-        <div class="container">
-            <div class="d-flex justify-content-center">
-                <canvas class="w-50 h-50 m-0" id="order-chart"></canvas>
-            </div>
-            <div class="d-flex justify-content-center">
-                <canvas class="w-50 h-50 m-0" id="regions-chart"></canvas>
-            </div>
-            <div class="d-flex justify-content-center">
-                <canvas class="w-50 h-50 m-0" id="products-chart"></canvas>
+    <div class="card mb-3">
+        <div class="card-body">
+            <div class="container">
+                <div class="d-flex justify-content-center">
+                    <canvas class="w-50 h-50 m-0" id="order-chart"></canvas>
+                </div>
+                <div class="d-flex justify-content-center">
+                    <canvas class="w-50 h-50 m-0" id="regions-chart"></canvas>
+                </div>
+                <div class="d-flex justify-content-center">
+                    <canvas class="w-50 h-50 m-0" id="products-chart"></canvas>
+                </div>
             </div>
         </div>
     </div>
-</div>
+
+    <script>
+        // Prepare data for Order Status Chart
+        const orderStatusData = {{ order_status_data|safe }};
+        const orderLabels = orderStatusData.map(item => item.status);
+        const orderCounts = orderStatusData.map(item => item.count);
+
+        const orderCtx = document.getElementById('order-chart').getContext('2d');
+        new Chart(orderCtx, {
+            type: 'bar',
+            data: {
+                labels: orderLabels,
+                datasets: [{
+                    label: 'Order Status',
+                    data: orderCounts,
+                    backgroundColor: 'rgba(75, 192, 192, 0.2)',
+                    borderColor: 'rgba(75, 192, 192, 1)',
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                scales: {
+                    y: {
+                        beginAtZero: true
+                    }
+                }
+            }
+        });
+
+        // Prepare data for Regions Chart
+        const regionData = {{ region_data|safe }};
+        const regionLabels = regionData.map(item => item['region__name']);
+        const regionCounts = regionData.map(item => item.count);
+
+        const regionCtx = document.getElementById('regions-chart').getContext('2d');
+        new Chart(regionCtx, {
+            type: 'pie',
+            data: {
+                labels: regionLabels,
+                datasets: [{
+                    data: regionCounts,
+                    backgroundColor: [
+                        'rgba(255, 99, 132, 0.2)',
+                        'rgba(54, 162, 235, 0.2)',
+                        'rgba(255, 206, 86, 0.2)',
+                        'rgba(75, 192, 192, 0.2)',
+                        'rgba(153, 102, 255, 0.2)',
+                        'rgba(255, 159, 64, 0.2)'
+                    ],
+                    borderColor: [
+                        'rgba(255, 99, 132, 1)',
+                        'rgba(54, 162, 235, 1)',
+                        'rgba(255, 206, 86, 1)',
+                        'rgba(75, 192, 192, 1)',
+                        'rgba(153, 102, 255, 1)',
+                        'rgba(255, 159, 64, 1)'
+                    ],
+                    borderWidth: 1
+                }]
+            }
+        });
+
+        // Prepare data for Products Chart
+        const productData = {{ product_data|safe }};
+        const productLabels = productData.map(item => item['product__name']);
+        const productCounts = productData.map(item => item.count);
+
+        const productCtx = document.getElementById('products-chart').getContext('2d');
+        new Chart(productCtx, {
+            type: 'doughnut',
+            data: {
+                labels: productLabels,
+                datasets: [{
+                    data: productCounts,
+                    backgroundColor: [
+                        'rgba(255, 99, 132, 0.2)',
+                        'rgba(54, 162, 235, 0.2)',
+                        'rgba(255, 206, 86, 0.2)',
+                        'rgba(75, 192, 192, 0.2)',
+                        'rgba(153, 102, 255, 0.2)',
+                        'rgba(255, 159, 64, 0.2)'
+                    ],
+                    borderColor: [
+                        'rgba(255, 99, 132, 1)',
+                        'rgba(54, 162, 235, 1)',
+                        'rgba(255, 206, 86, 1)',
+                        'rgba(75, 192, 192, 1)',
+                        'rgba(153, 102, 255, 1)',
+                        'rgba(255, 159, 64, 1)'
+                    ],
+                    borderWidth: 1
+                }]
+            }
+        });
+    </script>
 {% endblock %}

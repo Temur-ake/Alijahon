@@ -1,21 +1,24 @@
 from django.contrib.auth.models import AbstractUser
 from django.db.models import TextChoices, CharField, TextField, ImageField, ForeignKey, CASCADE, Model, SlugField, \
-    PositiveSmallIntegerField, DateTimeField, SET_NULL, PositiveIntegerField
+    PositiveSmallIntegerField, DateTimeField, SET_NULL, PositiveIntegerField, DateField, BooleanField
 from django.utils.text import slugify
 
 from managers import CustomUserManager
 
+# ==================================================================================================================================================
+'''Base Model'''
+
 
 class BaseModel(Model):
-    created_at = DateTimeField(auto_now_add=True)
-    updated_at = DateTimeField(auto_now=True)
+    created_at = DateTimeField(auto_now_add=True, verbose_name="Yaratilgan Vaqti")
+    updated_at = DateTimeField(auto_now=True, verbose_name="Yangilangan Vaqti")
 
     class Meta:
         abstract = True
 
 
 class SlugBaseModel(Model):
-    name = CharField(max_length=255)
+    name = CharField(max_length=255, verbose_name="Nomi")
     slug = SlugField(max_length=255, unique=True, editable=False)
 
     class Meta:
@@ -34,22 +37,8 @@ class SlugBaseModel(Model):
         return self.name
 
 
-class Category(SlugBaseModel):
-    image = ImageField(upload_to='categories/%Y/%m/%d')
-
-
-class Product(SlugBaseModel, BaseModel):
-    image = ImageField(upload_to='products/%Y/%m/%d')
-    description = CharField(max_length=255)
-    price = PositiveSmallIntegerField()
-    quantity = PositiveSmallIntegerField()
-    category = ForeignKey('apps.Category', on_delete=CASCADE, related_name='products')
-    payment_referral = PositiveIntegerField(verbose_name="Chegirma", help_text="so'mda", default=0,
-                                            null=True,
-                                            blank=True)
-
-    class Meta:
-        ordering = ['-created_at']
+# ==================================================================================================================================================
+'''User Model'''
 
 
 class User(AbstractUser):
@@ -62,62 +51,107 @@ class User(AbstractUser):
 
     email = None
     username = None
-    phone = CharField(max_length=12, unique=True)
-    about = TextField(null=True, blank=True)
-    address = CharField(max_length=255, null=True, blank=True)
-    telegram_id = CharField(max_length=255, unique=True, null=True, blank=True)
-    image = ImageField(upload_to='users/', null=True, blank=True)
-    district = ForeignKey('apps.District', CASCADE, null=True, blank=True)
-    type = CharField(max_length=25, choices=Type.choices, default=Type.USER)
+    phone = CharField(max_length=12, unique=True, verbose_name="User Telefon Raqami")
+    about = TextField(null=True, blank=True, verbose_name="User Haqida")
+    address = CharField(max_length=255, null=True, blank=True, verbose_name="User Manzili")
+    telegram_id = CharField(max_length=255, unique=True, null=True, blank=True, verbose_name="User Telegram Id si")
+    image = ImageField(upload_to='users/', null=True, blank=True, verbose_name="User Rasmi")
+    district = ForeignKey('apps.District', CASCADE, null=True, blank=True, verbose_name="User Tumani")
+    type = CharField(max_length=25, choices=Type.choices, default=Type.USER, verbose_name="Userning turi")
 
     objects = CustomUserManager()
 
     USERNAME_FIELD = "phone"
     REQUIRED_FIELDS = []
 
+    def __str__(self):
+        return self.phone
+
 
 class Region(Model):
-    name = CharField(max_length=255)
+    name = CharField(max_length=255, verbose_name="Viloyat Nomi")
 
     def __str__(self):
         return self.name
 
 
 class District(Model):
-    name = CharField(max_length=255)
+    name = CharField(max_length=255, verbose_name="Tuman Nomi")
     region = ForeignKey('apps.Region', CASCADE)
 
     def __str__(self):
         return self.name
 
 
+class SiteDeliveryPrices(Model):
+    price_for_all_regions = PositiveIntegerField(db_default=0,
+                                                 verbose_name="Barcha Viloyatlar Uchun Yetkazib Berish Narxi")
+    price_for_tashkent_region = PositiveIntegerField(db_default=0,
+                                                     verbose_name="Toshkent Viloyati Uchun Yetkazib Berish Narxi")
+    price_for_inside_of_tashkent = PositiveIntegerField(db_default=0,
+                                                        verbose_name="Toshkent Shahar Ichiga Yetkazish Narxi")
+
+
+# ==================================================================================================================================================
+'''Shop Model'''
+
+
+class Category(SlugBaseModel):
+    image = ImageField(upload_to='categories/%Y/%m/%d', verbose_name="Kategoriya rasmi")
+
+    def __str__(self):
+        return self.name
+
+
+class Product(SlugBaseModel, BaseModel):
+    image = ImageField(upload_to='products/%Y/%m/%d', verbose_name="Mahsulot Rasmi")
+    description = CharField(max_length=255, verbose_name="Mahsulot haqida")
+    price = PositiveSmallIntegerField(verbose_name="Mahsulot narxi")
+    quantity = PositiveSmallIntegerField(verbose_name="Mahsulot Soni")
+    category = ForeignKey('apps.Category', on_delete=CASCADE, related_name='products',
+                          verbose_name="Mahsulot Kategoriyasi")
+    payment_referral = PositiveIntegerField(help_text="so'mda", default=0,
+                                            null=True,
+                                            blank=True, verbose_name="Oqim egasiga beriladigan pul")
+
+    class Meta:
+        ordering = ['-created_at']
+
+    def __str__(self):
+        return self.name
+
+
 class Stream(BaseModel):
-    discount = PositiveSmallIntegerField()
-    name = CharField(max_length=255)
-    product = ForeignKey(Product, CASCADE, related_name='streams')
-    owner = ForeignKey(User, CASCADE)
-    tashrif = PositiveSmallIntegerField(default=0)
+    name = CharField(max_length=255, verbose_name="Oqim Nomi (link ko'rinishida) ")
+    discount = PositiveSmallIntegerField(db_default=0, verbose_name="Oqim Chegirmasi")
+    product = ForeignKey(Product, CASCADE, related_name='streams', verbose_name="Oqimning Mahsuloti")
+    owner = ForeignKey(User, CASCADE, verbose_name="Oqimnning Egasi")
+    tashrif = PositiveSmallIntegerField(default=0, verbose_name="Oqimning Tashriflar Soni")
+
+    def __str__(self):
+        return self.name
 
 
 class Order(BaseModel):
     class Type(TextChoices):
         YANGI = 'yangi', 'YANGI'
-        TAYYOR = 'Dastavaga tayyor', 'DASTAVKAGA TAYYOR'
+        TAYYOR = 'Dastavkaga tayyor', 'DASTAVKAGA TAYYOR'
         YETKAZILMOQDA = 'yetkazilmoqda', 'YETKAZILMOQDA'
         YETKAZIB_BERILDI = 'yetkazib_berildi', 'YETKAZIB_BERILDI'
-        TELEFON_KOTARMADI = 'telefon_kotarmadi', 'TELEFON_KOTARMADI'
+        TELEFON_KOTARMADI = "telefon_kotarmadi", "TELEFON_KOTARMADI"
         BEKOR_QILINDI = 'bekor_qilindi', 'BEKOR_QILINDI'
         ARXIVLANDI = 'arxivlandi', 'ARXIVLANDI'
 
-    quantity = PositiveSmallIntegerField(db_default=1)
-    product = ForeignKey(Product, CASCADE)
-    owner = ForeignKey(User, SET_NULL, related_name='owner', null=True, blank=True)
-    phone = CharField(max_length=12)
-    full_name = CharField(max_length=255)
-    status = CharField(max_length=255, choices=Type.choices, default=Type.YANGI)
-    region = ForeignKey(Region, CASCADE, null=True, blank=True)
-    district = ForeignKey(District, CASCADE, null=True, blank=True)
-    stream = ForeignKey(Stream, SET_NULL, null=True, blank=True, related_name='orders')
+    quantity = PositiveSmallIntegerField(db_default=1, verbose_name="Buyurtma soni")
+    product = ForeignKey(Product, CASCADE, verbose_name="Buyurtma mahsuloti")
+    owner = ForeignKey(User, SET_NULL, related_name='orders', null=True, blank=True, verbose_name="Mahsulot Beruvchi")
+    phone = CharField(max_length=12, verbose_name="Buyurtma qilganing raqami")
+    full_name = CharField(max_length=255, verbose_name="Buyurtmani Qabul qiluvchi")
+    status = CharField(max_length=255, choices=Type.choices, default=Type.YANGI, verbose_name="Buyurtma holati")
+    region = ForeignKey(Region, CASCADE, null=True, blank=True, verbose_name="Buyurtma boradigan shahar")
+    district = ForeignKey(District, CASCADE, null=True, blank=True, verbose_name="Buyurtma boradigan tuman")
+    stream = ForeignKey(Stream, SET_NULL, null=True, blank=True, related_name='orders',
+                        verbose_name="Buyurtmaning oqimi")
 
     @property
     def price(self):
@@ -126,3 +160,18 @@ class Order(BaseModel):
         else:
             order_price = self.product.price
         return order_price
+
+    def __str__(self):
+        return self.full_name
+
+
+class Concurs(BaseModel):
+    name = CharField(max_length=255, verbose_name="Musobaqa Nomi")
+    about = TextField(verbose_name="Musobaqa haqida")
+    image = ImageField(upload_to='images/%Y/%m/%d', verbose_name="Musobaqa Rasmi")
+    start_date = DateField(null=True, blank=True, verbose_name="Musobaqa Boshlanish Vaqti")
+    end_date = DateField(null=True, blank=True, verbose_name="Musobaqa Tugash Vaqti")
+    is_started = BooleanField(default=False, verbose_name="Musobaqa holati")
+
+    def __str__(self):
+        return self.name
