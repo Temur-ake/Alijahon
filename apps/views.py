@@ -9,6 +9,7 @@ from django.db.models import Q, Count, F, Sum
 from django.http import JsonResponse
 from django.shortcuts import redirect, render
 from django.urls import reverse_lazy
+from django.utils import timezone
 from django.utils.timezone import now
 from django.views import View
 from django.views.generic import ListView, DetailView, UpdateView, CreateView, TemplateView
@@ -179,6 +180,11 @@ class MarketView(ListView):
         qs = super().get_queryset()
         name = self.request.GET.get('name')
         slug = self.kwargs.get('slug')
+        top = self.request.GET.get('category')
+
+        if top:
+            qs = Product.objects.filter(order__status=Order.Type.YETKAZIB_BERILDI).annotate(
+                count=Count('order')).order_by('-count')
 
         if slug:
             qs = qs.filter(category__slug=slug)
@@ -262,22 +268,31 @@ class StreamStatisticsListView(ListView):
         period = self.request.GET.get('period')
 
         if period == 'today':
-            qs = qs.filter(orders__created_at__exact=now().date())
+            qs = qs.filter(orders__created_at__date=timezone.now().date())
+
         elif period == 'last_day':
-            qs = qs.filter(orders__created_at__exact=now().date() - timedelta(1))
+            start_date = timezone.now() - timedelta(days=1)
+            end_date = timezone.now()
+            qs = qs.filter(orders__created_at__range=(start_date, end_date))
+
         elif period == 'weekly':
-            qs = qs.filter(orders__created_at__gte=now() - timedelta(7))
+            start_date = timezone.now() - timedelta(days=7)
+            end_date = timezone.now()
+            qs = qs.filter(orders__created_at__range=(start_date, end_date))
+
         elif period == 'monthly':
-            qs = qs.filter(orders__created_at__gte=now() - timedelta(30))
+            start_date = timezone.now() - timedelta(days=30)
+            end_date = timezone.now()
+            qs = qs.filter(orders__created_at__range=(start_date, end_date))
 
         qs = qs.annotate(
-            yangi=Count('orders', Q(orders__status='yangi') & Q(orders__stream_id=F('id'))),
-            tayyor=Count('orders', Q(orders__status='tayyor') & Q(orders__stream_id=F('id'))),
-            yetkazilmoqda=Count('orders', Q(orders__status='yetkazilmoqda') & Q(orders__stream_id=F('id'))),
-            yetkazib_berildi=Count('orders', Q(orders__status='yetkazib_berildi') & Q(orders__stream_id=F('id'))),
-            telefon_kotarmadi=Count('orders', Q(orders__status='telefon_kotarmadi') & Q(orders__stream_id=F('id'))),
-            bekor_qilindi=Count('orders', Q(orders__status='bekor_qilindi') & Q(orders__stream_id=F('id'))),
-            arxivlandi=Count('orders', Q(orders__status='arxivlandi') & Q(orders__stream_id=F('id'))),
+            yangi=Count('orders', Q(orders__status='yangi')),
+            tayyor=Count('orders', Q(orders__status='tayyor')),
+            yetkazilmoqda=Count('orders', Q(orders__status='yetkazilmoqda')),
+            yetkazib_berildi=Count('orders', Q(orders__status='yetkazib_berildi')),
+            telefon_kotarmadi=Count('orders', Q(orders__status='telefon_kotarmadi')),
+            bekor_qilindi=Count('orders', Q(orders__status='bekor_qilindi')),
+            arxivlandi=Count('orders', Q(orders__status='arxivlandi')),
         )
         qs.aggregates = qs.aggregate(
             total_tashrif=Sum('tashrif'),
@@ -294,18 +309,32 @@ class StreamStatisticsListView(ListView):
         return qs
 
 
-class RequestTemplateView(TemplateView):
+class RequestListView(ListView):
+    model = Order
     template_name = "apps/admin_page/so'rovlar.html"
+    context_object_name = 'orders'
+
+    def get_queryset(self):
+        return super().get_queryset().filter(stream__isnull=False, owner=self.request.user)
 
 
-class ConcursTemplateView(TemplateView):
+class ConcursTemplateView(ListView):
+    queryset = User.objects.all()
     template_name = 'apps/admin_page/concurs.html'
+    context_object_name = 'users'
+
+    def get_queryset(self):
+        qs = super().get_queryset()
+        qs.filter(stream__owner=self.request.user)
+        qs = qs.filter(orders__status='yetkazib_berildi', orders__stream__isnull=False).annotate(
+            count=Sum('orders__quantity')).values(
+            'first_name', 'last_name', 'count').order_by('-count')
+        return qs
 
     def get_context_data(self, **kwargs):
         ctx = super().get_context_data(**kwargs)
         ctx['concurs'] = Concurs.objects.filter(is_started=True)
-        ctx['users'] = User.objects.filter(orders__status='yetkazib_berildi').annotate(count=Count('orders')).values(
-            'first_name', 'last_name', 'count').order_by('-count')
+
         return ctx
 
 
@@ -314,8 +343,6 @@ class TolovTemplateView(TemplateView):
 
 
 class DiagramsView(View):
-    print('Diagram ishladi')
-    template_name = 'apps/admin_page/diagrams.html'
 
     def get(self, request):
         count_order = Order.objects.count()
@@ -341,5 +368,8 @@ class DiagramsView(View):
             'product_data': product_data
 
         }
+        print(context['order_status_data'])
+        print(context['region_data'])
+        print(context['product_data'])
 
         return render(request, 'apps/admin_page/diagrams.html', context)

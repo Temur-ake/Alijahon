@@ -9,7 +9,7 @@ from apps.views import (
     ProfileView,
     ProfileUpdateView, DistrictListView, OrderDetailView, OrderListView, PasswordUpdateView, MarketView, StreamListview,
     StreamCreateView, StreamDetailView, StatisticProductDetailView, AdminPageTemplateView,
-    RequestTemplateView, ConcursTemplateView, TolovTemplateView, StreamStatisticsListView,
+    RequestListView, ConcursTemplateView, TolovTemplateView, StreamStatisticsListView,
     DiagramsView
 )
 
@@ -38,7 +38,7 @@ urlpatterns = [
     path('admin_page/market/category=<slug:slug>', MarketView.as_view(), name='market_category_page'),
     path('admin_page/urls/', StreamListview.as_view(), name='stream_list'),
     path('admin_page/product/<int:pk>', StatisticProductDetailView.as_view(), name='product_statistics'),
-    path('admin_page/requests', RequestTemplateView.as_view(), name='request_page'),
+    path('admin_page/requests', RequestListView.as_view(), name='request_page'),
     path('admin_page/competition', ConcursTemplateView.as_view(), name='competition_page'),
     path('admin_page/withdraw', TolovTemplateView.as_view(), name='tolov_page'),
     path('admin_page/diagrams', DiagramsView.as_view(), name='diagrams_page'),

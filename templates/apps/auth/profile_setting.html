@@ -11,11 +11,19 @@
                              style="background-image:url(/static/new_design/assets/img/generic/4.jpg);">
                         </div>
                         <input class="d-none" id="upload-cover-image" type="file">
+
                     </div>
                     <div class="avatar avatar-5xl avatar-profile shadow-sm img-thumbnail rounded-circle">
                         <div class="h-100 w-100 rounded-circle overflow-hidden position-relative">
-                            <img src="{% static 'apps/assets/img/nouser.png' %}" width="200" alt="">
+                            <img src="
+                                    
+                                    
+                                    
+                                    
+                                    {% if user.image %}{{ user.image.url }}{% else %}{% static 'apps/assets/img/nouser.png' %}{% endif %}"
+                                 width="200" alt="">
                         </div>
+
                     </div>
                 </div>
             </div>
@@ -41,11 +49,11 @@
                             <input type="text" name="last_name" value="{{ user.last_name }}" class="form-control"
                                    maxlength="40" required>
                         </div>
-{#                        <div class="col-lg-6">#}
-{#                            Telefon#}
-{#                            <input type="text" name="phone" value="{{ user.phone }}" class="form-control" maxlength="12"#}
-{#                                   required>#}
-{#                        </div>#}
+                        {#                        <div class="col-lg-6">#}
+                        {#                            Telefon#}
+                        {#                            <input type="text" name="phone" value="{{ user.phone }}" class="form-control" maxlength="12"#}
+                        {#                                   required>#}
+                        {#                        </div>#}
                         <div class="col-lg-6">
                             Telegram ID
                             <input type="text" name="telegram_id" value="{{ user.telegram_id }}" class="form-control"
@@ -81,6 +89,17 @@
                             Siz haqingizda
                             <textarea name="about" class="form-control" maxlength="399"
                                       required>{{ user.about }}</textarea>
+                        </div>
+
+                        <div class="col-lg-6">
+                            <br>
+                            
+                            Rasm o'zgartirish
+                            
+                            <br>
+
+                            <input type="file" name="image">
+
                         </div>
                         <div class="col-12 d-flex justify-content-end">
                             <button class="btn btn-primary" type="submit">Saqlash</button>

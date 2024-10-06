@@ -1,6 +1,6 @@
 from django.contrib.admin import ModelAdmin, register
 
-from apps.models import Category, Product, Region, District, Concurs, Order, Stream
+from apps.models import Category, Product, Region, District, Concurs, Order, Stream, User
 
 
 # Register your models here.
@@ -36,4 +36,9 @@ class DistrictModelAdmin(ModelAdmin):
 
 @register(Stream)
 class StreamModelAdmin(ModelAdmin):
+    pass
+
+
+@register(User)
+class UserModelAdmin(ModelAdmin):
     pass

@@ -1,7 +1,7 @@
 <div class="card-footer border-top d-flex justify-content-center">
     {% if page_obj.has_previous %}
         <a class="btn btn-sm btn-falcon-default me-2"
-           href="?page={{ page_obj.previous_page_number }}"
+           href="?page={{ page_obj.previous_page_number }}&{{ request.GET.urlencode }}"
            title="Previous">
             <span class="fas fa-chevron-left"></span>
         </a>
@@ -14,7 +14,8 @@
 
     {% if page_obj.previous_page_number != 1 %}
         {% if page_obj.has_previous %}
-            <a class="btn btn-sm btn-falcon-default me-2" href="?page=1">1</a>
+            <a class="btn btn-sm btn-falcon-default me-2"
+               href="?page=1&{{ request.GET.urlencode }}">1</a>
         {% endif %}
         <a class="btn btn-sm btn-falcon-default me-2" href="#">
             <span class="fas fa-ellipsis-h"></span>
@@ -25,7 +26,7 @@
 
     {% if page_obj.has_next %}
         <a class="btn btn-sm btn-falcon-default me-2"
-           href="?page={{ page_obj.next_page_number }}">
+           href="?page={{ page_obj.next_page_number }}&{{ request.GET.urlencode }}">
             {{ page_obj.next_page_number }}
         </a>
     {% endif %}
@@ -36,7 +37,7 @@
         </a>
         {% if page_obj.has_next %}
             <a class="btn btn-sm btn-falcon-default me-2"
-               href="?page={{ page_obj.paginator.num_pages }}">
+               href="?page={{ page_obj.paginator.num_pages }}&{{ request.GET.urlencode }}">
                 {{ page_obj.paginator.num_pages }}
             </a>
         {% endif %}
@@ -44,7 +45,7 @@
 
     {% if page_obj.has_next %}
         <a class="btn btn-sm btn-falcon-default me-2"
-           href="?page={{ page_obj.next_page_number }}" title="Next">
+           href="?page={{ page_obj.next_page_number }}&{{ request.GET.urlencode }}" title="Next">
             <span class="fas fa-chevron-right"></span>
         </a>
     {% else %}
@@ -54,6 +55,7 @@
         </button>
     {% endif %}
 </div>
+
 
 <style>
     .btn-falcon-default {
@@ -65,7 +67,7 @@
 
     .btn-falcon-default:hover {
         background-color: transparent; /* Change background to transparent on hover */
-        {#color: blue; /* Use the text color from the parent element */#}
+    {#color: blue; /* Use the text color from the parent element */#}
     }
 
     /* Additional styling for disabled buttons */

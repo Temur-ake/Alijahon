@@ -47,6 +47,7 @@
     <script src="{% static 'apps/assets/js/config.js' %}"></script>
     <script src="{% static 'apps/assets/js/lightbox.min.js' %}"></script>
     <script src="{% static 'apps/vendors/overlayscrollbars/OverlayScrollbars.min.js' %}"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <link href="{% static 'apps/vendors/swiper/swiper-bundle.min.css' %}" rel="stylesheet"/>
 
 
@@ -75,7 +76,6 @@
     <link href="{% static 'apps/assets/css/style.css' %}" rel="stylesheet">
     <link href="{% static 'apps/assets/css/lightbox.min.css' %}" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
     <script>
         var isRTL = JSON.parse(localStorage.getItem('isRTL'));
@@ -324,7 +324,7 @@
                            data-bs-toggle="dropdown"
                            aria-haspopup="true" aria-expanded="false">
                             <div class="avatar avatar-xl">
-                                <img class="rounded-circle" src="{% static 'apps/assets/img/nouser.png' %}" alt="card"/>
+                                <img class="rounded-circle" src="{% if user.image %}{{ user.image.url }}{% else %}{% static 'apps/assets/img/nouser.png' %}{% endif %}" alt="card"/>
                             </div>
                         </a>
                         <div class="dropdown-menu dropdown-menu-end py-0" aria-labelledby="navbarDropdownUser">
@@ -370,6 +370,7 @@
                         </div>
                     </li>
                 </ul>
+
             </nav>
             {% block base %}
             {% endblock %}

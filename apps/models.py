@@ -113,6 +113,7 @@ class Product(SlugBaseModel, BaseModel):
     payment_referral = PositiveIntegerField(help_text="so'mda", default=0,
                                             null=True,
                                             blank=True, verbose_name="Oqim egasiga beriladigan pul")
+    discount_market = TextField(null=True, blank=True, verbose_name="Market Page Uchun Chegrima")
 
     class Meta:
         ordering = ['-created_at']
