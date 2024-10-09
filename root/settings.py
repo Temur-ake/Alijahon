@@ -40,6 +40,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'apps.apps.AppsConfig',
+    'django.contrib.humanize',
 
 ]
 AUTH_USER_MODEL = 'apps.User'

@@ -12,96 +12,53 @@
                                 <h5>Mening hisobim</h5>
                             </div>
                             <div class="card-body">
-                                <h5 class="card-title">Asosiy balansda: 0 so'm</h5>
-                                <h5 class="card-title">To'lab berildi: 0 so'm</h5>
+                                <h5 class="card-title">Asosiy balansda: <span
+                                        id="user-balance">{{ user.balance }} so'm</span></h5>
+                                <h5 class="card-title">To'lab berildi: <span id="remaining-amount">0</span> so'm</h5>
                             </div>
                         </div>
-
                     </div>
 
                     <div class="col-sm-6 p-4">
                         <div class="card">
                             <div class="card-header">
-                                <h5>To'lovga sorov berish formasi</h5>
+                                <h5>To'lovga so'rov berish formasi</h5>
                             </div>
-                            <nav>
-                                <div class="nav nav-tabs" id="nav-tab" role="tablist">
-                                    <button id="nav-money-tab" class="nav-link active" data-bs-toggle="tab"
-                                            data-bs-target="#nav-money" type="button" role="tab"
-                                            aria-controls="nav-money"
-                                            aria-selected="true">Pul
-                                    </button>
-                                    <button class="nav-link" id="nav-coin-tab" data-bs-toggle="tab"
-                                            data-bs-target="#nav-coin" type="button" role="tab" aria-controls="nav-coin"
-                                            aria-selected="false">Tanga
-                                    </button>
+                            <form action="{% url 'tolov_create_page' %}" method="post">
+                                {% csrf_token %}
+                                <div class="form-group">
+                                    <label for="id_card_number">Karta raqami</label>
+                                    <input type="text" name="card_number" id="id_card_number" class="form-control"
+                                           placeholder="Karta raqamini kiriting" maxlength="16" required>
+                                    {% for error in form.card_number.errors %}
+                                        <div class="text-danger">{{ error }}</div>
+                                    {% endfor %}
                                 </div>
-                            </nav>
-                            <div class="tab-content" id="nav-tabContent">
-                                <div class="tab-pane fade show active" id="nav-money" role="tabpanel"
-                                     aria-labelledby="nav-money-tab">
-                                    <form class="card-body" method="post">
-                                        <input type="hidden" name="csrfmiddlewaretoken"
-                                               value="swwaLODrr7Cp32WzfiU2MHtERu2L71X18FSWWhIGwDuV6xdpz6y97KQm74iCrDOs">
-                                        <div class="form-group">
-                                            Karta raqami <input type="text" name="card_number" class="form-control"
-                                                                placeholder="Karta raqamini kiriting" maxlength="16"
-                                                                required id="id_card_number">
-                                        </div>
 
-                                        <div class="form-group">
-                                            Amount <input type="number" name="amount" class="form-control"
-                                                          placeholder="Miqdorini kiriting" required id="id_amount">
-                                        </div>
-
-                                        <div class="form-group">
-                                            <select name="type" class="form-control class-type" style="display: none;"
-                                                    id="id_type">
-                                                <option value="money">Pul</option>
-
-                                                <option value="coin">Tanga</option>
-
-                                            </select>
-                                        </div>
-
-                                        <input type="submit" value="Tasdiqlash" class="btn btn-primary">
-                                    </form>
+                                <div class="form-group">
+                                    <label for="id_amount">Miqdor</label>
+                                    <input type="number" name="amount" id="id_amount" class="form-control"
+                                           placeholder="Miqdorini kiriting" required>
+                                    {% for error in form.amount.errors %}
+                                        <div class="text-danger">{{ error }}</div>
+                                    {% endfor %}
                                 </div>
-                                <div class="tab-pane fade" id="nav-coin" role="tabpanel" aria-labelledby="nav-coin-tab">
-                                    <form class="card-body" method="post">
-                                        <input type="hidden" name="csrfmiddlewaretoken"
-                                               value="swwaLODrr7Cp32WzfiU2MHtERu2L71X18FSWWhIGwDuV6xdpz6y97KQm74iCrDOs">
-                                        <div class="form-group">
-                                            Karta raqami <input type="text" name="card_number" class="form-control"
-                                                                placeholder="Karta raqamini kiriting" maxlength="16"
-                                                                required id="id_card_number">
-                                        </div>
 
-                                        <div class="form-group">
-                                            Amount <input type="number" name="amount" class="form-control"
-                                                          placeholder="Miqdorini kiriting" required id="id_amount">
-                                        </div>
+                                <!-- Set the status based on transactions or default to 'pending' -->
+                                {% if transactions %}
+                                    <input type="hidden" name="status" value="{{ transactions.0.status }}">
+                                {% else %}
+                                    <input type="hidden" name="status" value="pending">
+                                {% endif %}
 
-                                        <div class="form-group">
-                                            <select name="type" class="form-control class-type" style="display: none;"
-                                                    id="id_type">
-                                                <option value="money">Pul</option>
+                                <input type="submit" value="Tasdiqlash" class="btn btn-primary">
+                            </form>
 
-                                                <option value="coin">Tanga</option>
-
-                                            </select>
-                                        </div>
-
-                                        <input type="submit" method="POST" value="Tasdiqlash" class="btn btn-primary">
-                                    </form>
-                                </div>
-                            </div>
                         </div>
                     </div>
                 </div>
 
-                <br>
-                <br>
+                <br><br>
 
                 <div class="table-responsive">
                     <table class="table">
@@ -114,13 +71,21 @@
                             <th scope="col">Xabar</th>
                         </tr>
                         </thead>
-
                         <tbody>
-                        <tr class="text-center">
+                        {% for transaction in transactions %}
+                            <tr>
+                                <td>{{ transaction.created_at }}</td>
+                                <td>{{ transaction.card_number }}</td>
+                                <td>{{ transaction.amount }}</td>
+                                <td>{{ transaction.get_status_display }}</td>
 
-                            <th colspan="5"> Hozircha sizda pul yechish sorovlari mavjud emas</th>
-
-                        </tr>
+                                <td>{{ transaction.message|default:"--" }}</td>
+                            </tr>
+                        {% empty %}
+                            <tr class="text-center">
+                                <td colspan="5">Hozircha sizda pul yechish sorovlari mavjud emas</td>
+                            </tr>
+                        {% endfor %}
                         </tbody>
                     </table>
                 </div>

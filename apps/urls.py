@@ -9,8 +9,8 @@ from apps.views import (
     ProfileView,
     ProfileUpdateView, DistrictListView, OrderDetailView, OrderListView, PasswordUpdateView, MarketView, StreamListview,
     StreamCreateView, StreamDetailView, StatisticProductDetailView, AdminPageTemplateView,
-    RequestListView, ConcursTemplateView, TolovTemplateView, StreamStatisticsListView,
-    DiagramsView
+    RequestListView, ConcursTemplateView, StreamStatisticsListView,
+    TransactionCreateView, TransactionListView, OperatorListView, OperatorDetailView
 )
 
 urlpatterns = [
@@ -40,10 +40,12 @@ urlpatterns = [
     path('admin_page/product/<int:pk>', StatisticProductDetailView.as_view(), name='product_statistics'),
     path('admin_page/requests', RequestListView.as_view(), name='request_page'),
     path('admin_page/competition', ConcursTemplateView.as_view(), name='competition_page'),
-    path('admin_page/withdraw', TolovTemplateView.as_view(), name='tolov_page'),
-    path('admin_page/diagrams', DiagramsView.as_view(), name='diagrams_page'),
+    path('admin_page/withdraw/create', TransactionCreateView.as_view(), name='tolov_create_page'),
+    path('admin_page/withdraw', TransactionListView.as_view(), name='tolov_page'),
     path('stream/create/', StreamCreateView.as_view(), name='stream_create'),
     path('stream/<int:pk>', StreamDetailView.as_view(), name='stream_detail'),
     path('stream/stats', StreamStatisticsListView.as_view(), name='stream_statistics'),
+    path('operators', OperatorListView.as_view(), name='operators_list'),
+    path('operators-detail', OperatorDetailView.as_view(), name='operators_detail')
 
 ]

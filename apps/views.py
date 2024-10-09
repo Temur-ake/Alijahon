@@ -14,8 +14,10 @@ from django.utils.timezone import now
 from django.views import View
 from django.views.generic import ListView, DetailView, UpdateView, CreateView, TemplateView
 
-from apps.forms import CustomAuthenticationForm, CreateOrderForm, ChangePasswordModelForm, StreamCreateForm
-from apps.models import Product, Category, User, Region, District, Order, Stream, Concurs
+from apps.forms import CustomAuthenticationForm, CreateOrderForm, ChangePasswordModelForm, StreamCreateForm, \
+    TransactionForm
+from apps.models import Product, Category, User, Region, District, Order, Stream, Concurs, SiteDeliveryPrices, \
+    Transaction
 
 # ==================================================================================================================================================
 '''User View'''
@@ -140,9 +142,10 @@ class ProductDetailView(DetailView, CreateView):
     context_object_name = 'product'
 
     def form_valid(self, form):
-        order = form.save()
+        form.instance.owner = self.request.user
         if len(form.cleaned_data['phone']) != 12:
             raise ValidationError('number must be 12 in length')
+        order = form.save()
         return redirect('order_detail', pk=order.pk)
 
 
@@ -159,10 +162,17 @@ class OrderListView(LoginRequiredMixin, ListView):
 class OrderDetailView(DetailView):
     queryset = Order.objects.all()
     template_name = 'apps/order/success.html'
+
     # context_object_name = 'order'
 
+    def get_context_data(self, **kwargs):
+        ctx = super().get_context_data(**kwargs)
+        ctx['yetkazish'] = SiteDeliveryPrices.objects.first()
+        return ctx
 
-# ==================================================================================================================================================
+    # ==================================================================================================================================================
+
+
 '''Admin Page View'''
 
 
@@ -338,38 +348,50 @@ class ConcursTemplateView(ListView):
         return ctx
 
 
-class TolovTemplateView(TemplateView):
+# views.py
+class TransactionListView(ListView):
+    queryset = Transaction.objects.all()
     template_name = 'apps/admin_page/tolov.html'
+    context_object_name = 'transactions'
+
+    def get_queryset(self):
+        qs = super().get_queryset()
+        qs = qs.filter(owner_id=self.request.user)
+        return qs
 
 
-class DiagramsView(View):
+class TransactionCreateView(CreateView):
+    model = Transaction
+    form_class = TransactionForm
+    template_name = 'apps/admin_page/tolov.html'
+    success_url = reverse_lazy('tolov_page')
 
-    def get(self, request):
-        count_order = Order.objects.count()
-        product_count = Product.objects.count()
+    def form_valid(self, form):
+        form.instance.owner = self.request.user
+        entered_amount = form.cleaned_data['amount']
 
-        status_data_order = (
-            Order.objects.values('status').annotate(count=Count('id'))
-        )
+        if self.request.user.balance < entered_amount:
+            form.add_error('amount', "Buncha mablag' mavjud emas.")
+            return self.form_invalid(form)
 
-        region_data = (
-            Order.objects.values('region__name').annotate(count=Count('id'))
-        )
+        # Save the transaction
+        transaction = form.save(commit=False)
 
-        product_data = (
-            Order.objects.values('product__name').annotate(count=Count('id'))
-        )
+        transaction_status = form.cleaned_data['status']
+        if transaction_status == 'PAID':
+            self.request.user.balance -= entered_amount
+            self.request.user.save()
 
-        context = {
-            'order_count': count_order,
-            'product_count': product_count,
-            'order_status_data': status_data_order,
-            'region_data': region_data,
-            'product_data': product_data
+        transaction.save()
 
-        }
-        print(context['order_status_data'])
-        print(context['region_data'])
-        print(context['product_data'])
+        print(f"New Balance: {self.request.user.balance}")
 
-        return render(request, 'apps/admin_page/diagrams.html', context)
+        return super().form_valid(form)
+
+
+class OperatorListView(TemplateView):
+    template_name = 'apps/operators/operator-list.html'
+
+
+class OperatorDetailView(TemplateView):
+    template_name = 'apps/operators/operator-detail.html'

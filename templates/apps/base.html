@@ -242,13 +242,7 @@
                                             </div>
                                         </a>
                                     </li>
-                                    <li class="nav-item">
-                                        <a class="nav-link active" href="{% url 'diagrams_page' %}"
-                                           aria-expanded="false">
-                                            <div class="d-flex align-items-center"><span class="nav-link-text ps-1">Diagrammalar</span>
-                                            </div>
-                                        </a>
-                                    </li>
+                                    
                                 </ul>
                             {% endif %}
 
@@ -312,11 +306,11 @@
                         </div>
                     </li>
 
-                    <li class="nav-item">
-                        <div class="theme-control-toggle px-2">
-                            <a href="/admin_page/coins">Tangalar: 0</a>
-                        </div>
-                    </li>
+{#                    <li class="nav-item">#}
+{#                        <div class="theme-control-toggle px-2">#}
+{#                            <a href="/admin_page/coins">Tangalar: 0</a>#}
+{#                        </div>#}
+{#                    </li>#}
 
 
                     <li class="nav-item dropdown">
@@ -324,7 +318,9 @@
                            data-bs-toggle="dropdown"
                            aria-haspopup="true" aria-expanded="false">
                             <div class="avatar avatar-xl">
-                                <img class="rounded-circle" src="{% if user.image %}{{ user.image.url }}{% else %}{% static 'apps/assets/img/nouser.png' %}{% endif %}" alt="card"/>
+                                <img class="rounded-circle" src="
+                                        {% if user.image %}{{ user.image.url }}{% else %}{% static 'apps/assets/img/nouser.png' %}{% endif %}"
+                                     alt="card"/>
                             </div>
                         </a>
                         <div class="dropdown-menu dropdown-menu-end py-0" aria-labelledby="navbarDropdownUser">

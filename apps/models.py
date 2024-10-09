@@ -1,6 +1,6 @@
 from django.contrib.auth.models import AbstractUser
 from django.db.models import TextChoices, CharField, TextField, ImageField, ForeignKey, CASCADE, Model, SlugField, \
-    PositiveSmallIntegerField, DateTimeField, SET_NULL, PositiveIntegerField, DateField, BooleanField
+    PositiveSmallIntegerField, DateTimeField, SET_NULL, PositiveIntegerField, DateField, BooleanField, FileField
 from django.utils.text import slugify
 
 from managers import CustomUserManager
@@ -58,6 +58,7 @@ class User(AbstractUser):
     image = ImageField(upload_to='users/', null=True, blank=True, verbose_name="User Rasmi")
     district = ForeignKey('apps.District', CASCADE, null=True, blank=True, verbose_name="User Tumani")
     type = CharField(max_length=25, choices=Type.choices, default=Type.USER, verbose_name="Userning turi")
+    balance = PositiveIntegerField(db_default=0, verbose_name="Userning balansi")
 
     objects = CustomUserManager()
 
@@ -176,3 +177,21 @@ class Concurs(BaseModel):
 
     def __str__(self):
         return self.name
+
+
+class Transaction(BaseModel):
+    class TYPES(TextChoices):
+        PENDING = 'pending', 'PENDING'
+        CANCELED = 'canceled', 'CANCELED'
+        PAID = 'paid', 'PAID'
+        ERROR = 'error', 'ERROR'
+
+    owner = ForeignKey(User, CASCADE, verbose_name="Mablag'gning egasi")
+    amount = PositiveIntegerField(db_default=0, verbose_name="Userning beriladigan pul miqdori")
+    card_number = CharField(max_length=16, verbose_name="Userning Karta Raqami")
+    message = TextField(null=True, blank=True, verbose_name="Tolov xabari")
+    image = ImageField(upload_to='transactons/%Y/%m/%d', null=True, blank=True, verbose_name="Tolov rasmi")
+    status = CharField(max_length=10, choices=TYPES.choices, default=TYPES.PENDING, verbose_name="Tolov Statusi")
+
+    def __str__(self):
+        return self.owner.type

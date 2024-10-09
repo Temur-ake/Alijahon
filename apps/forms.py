@@ -5,7 +5,7 @@ from django.core.exceptions import ValidationError
 from django.forms import CharField, PasswordInput, Form, ModelForm
 from django.utils.translation import gettext_lazy as _
 
-from apps.models import User, Order, Stream, Product
+from apps.models import User, Order, Stream, Product, Transaction
 
 
 class CustomAuthenticationForm(Form):
@@ -123,3 +123,21 @@ class StreamCreateForm(ModelForm):
         if discount > pay_r:
             raise ValidationError('chegirma ko`payib ketdi')
         return discount
+
+
+class TransactionForm(ModelForm):
+    class Meta:
+        model = Transaction
+        fields = ['card_number', 'amount', 'status']
+
+    def clean_card_number(self):
+        card_number = self.cleaned_data.get('card_number')
+        if len(card_number) != 16:
+            raise ValidationError("Card number must be 16 digits long.")
+        return card_number
+
+    def clean_amount(self):
+        amount = self.cleaned_data.get('amount')
+        if amount <= 0:
+            raise ValidationError("Amount must be greater than zero.")
+        return amount
