@@ -15,9 +15,9 @@ from django.views import View
 from django.views.generic import ListView, DetailView, UpdateView, CreateView, TemplateView
 
 from apps.forms import CustomAuthenticationForm, CreateOrderForm, ChangePasswordModelForm, StreamCreateForm, \
-    TransactionForm
+    TransactionForm, CurrierProfileForm
 from apps.models import Product, Category, User, Region, District, Order, Stream, Concurs, SiteDeliveryPrices, \
-    Transaction
+    Transaction, CurrierProfile
 
 # ==================================================================================================================================================
 '''User View'''
@@ -389,9 +389,28 @@ class TransactionCreateView(CreateView):
         return super().form_valid(form)
 
 
-class OperatorListView(TemplateView):
+class OperatorListView(ListView):
+    model = User
     template_name = 'apps/operators/operator-list.html'
 
+    def get_queryset(self):
+        qs = super().get_queryset()
+        status = self.request.GET.get('status')
 
-class OperatorDetailView(TemplateView):
+        # if status == 'new':
+
+
+class OperatorDeliveredView(TemplateView):
     template_name = 'apps/operators/operator-detail.html'
+
+
+class CurrierListView(ListView):
+    model = CurrierProfile
+    template_name = 'apps/operators/currier-list.html'
+    context_object_name = 'curriers'
+
+
+class CurrierDetailView(DetailView):
+    model = CurrierProfile
+    template_name = 'apps/operators/currier-detail.html'
+    context_object_name = 'currier'

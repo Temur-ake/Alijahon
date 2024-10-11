@@ -1,6 +1,7 @@
 from django.contrib.auth.models import AbstractUser
 from django.db.models import TextChoices, CharField, TextField, ImageField, ForeignKey, CASCADE, Model, SlugField, \
-    PositiveSmallIntegerField, DateTimeField, SET_NULL, PositiveIntegerField, DateField, BooleanField, FileField
+    PositiveSmallIntegerField, DateTimeField, SET_NULL, PositiveIntegerField, DateField, BooleanField, FileField, \
+    Manager, OneToOneField
 from django.utils.text import slugify
 
 from managers import CustomUserManager
@@ -195,3 +196,165 @@ class Transaction(BaseModel):
 
     def __str__(self):
         return self.owner.type
+
+
+class CurrierProfile(Model):
+    user = OneToOneField(User, on_delete=CASCADE, related_name="currier_profile")
+    vehicle_type = CharField(max_length=50, verbose_name="Vehicle Type")
+    license_number = CharField(max_length=100, verbose_name="License Number")
+    availability_status = BooleanField(default=True, verbose_name="Is Available")
+
+    def __str__(self):
+        return f"{self.user.phone} - {self.vehicle_type}"
+
+
+# ==================================================================================================================================================
+'''Proxy'''
+
+
+class OrderProxyNew(Order):
+    proxy = True
+    verbose_name = 'Yangi Buyurtma'
+    verbose_name_plural = 'Yangi Buyurtmalar'
+
+
+class OrderProxyReady(Order):
+    proxy = True
+    verbose_name = 'Tayyor Buyurtma'
+    verbose_name_plural = 'Tayyor Buyurtmalar'
+
+
+class OrderProxyDelivering(Order):
+    proxy = True
+    verbose_name = 'Yetkazilmoqda Buyurtma'
+    verbose_name_plural = 'Yetkazilmoqda Buyurtmalar'
+
+
+# class OrderProxyLaterBuy(Order):
+#     proxy = True
+#     verbose_name = 'Keyin Oladi Buyurtma'
+#     verbose_name_plural = 'Keyin Oladi Buyurtmalar'
+
+
+class OrderProxyArchived(Order):
+    proxy = True
+    verbose_name = 'Arxivlandi Buyurtma'
+    verbose_name_plural = 'Arxivlandi Buyurtmalar'
+
+
+# class OrderProxyCorruptedCancel(Order):
+#     proxy = True
+#     verbose_name = 'Nosoz Bekor Qilindi Buyurtma'
+#     verbose_name_plural = 'Nosoz Bekor Qilindi Buyurtmalar'
+
+
+class OrderProxyDelivered(Order):
+    proxy = True
+    verbose_name = 'Yetkazib berildi Buyurtma'
+    verbose_name_plural = 'Yetkazib berildi Buyurtmalar'
+
+
+class OrderProxyCanceled(Order):
+    proxy = True
+    verbose_name = 'Qaytdi Buyurtma'
+    verbose_name_plural = 'Qaytdi Buyurtmalar'
+
+
+# class OrderProxyHold(Order):
+#     proxy = True
+#     verbose_name = 'Ushlab turishdagi Buyurtma'
+#     verbose_name_plural = 'Ushlab turishdagi Buyurtmalar'
+
+
+class UserProxyOperatorModel(User):
+    proxy = True
+    verbose_name = 'Operator'
+    verbose_name_plural = 'Operatorlar'
+
+
+class UserProxyManagerModel(User):
+    proxy = True
+    verbose_name = 'Manager'
+    verbose_name_plural = 'Managerlar'
+
+
+class UserProxyAdminModel(User):
+    proxy = True
+    verbose_name = 'Admin'
+    verbose_name_plural = 'Adminlar'
+
+
+class UserProxyDriverModel(User):
+    proxy = True
+    verbose_name = 'Driver'
+    verbose_name_plural = 'Driverlar'
+
+
+class UserProxyUserModel(User):
+    proxy = True
+    verbose_name = 'User'
+    verbose_name_plural = 'Userlar'
+
+
+# ==================================================================================================================================================
+'''Proxy Managers'''
+
+
+class OrderManagerNew(Manager):
+    def get_queryset(self):
+        return super().get_queryset().filter(status=self.model.Status.YANGI)
+
+
+class OrderManagerReady(Manager):
+    def get_queryset(self):
+        return super().get_queryset().filter(status=self.model.Status.TAYYOR)
+
+
+class OrderManagerDelivering(Manager):
+    def get_queryset(self):
+        return super().get_queryset().filter(status=self.model.Status.YETKAZILMOQDA)
+
+
+class OrderManagerDelivered(Manager):
+    def get_queryset(self):
+        return super().get_queryset().filter(status=self.model.Status.YETKAZIB_BERILDI)
+
+
+class OrderManagerNoAnswer(Manager):
+    def get_queryset(self):
+        return super().get_queryset().filter(status=self.model.Status.TELEFON_KOTARMADI)
+
+
+class OrderManagerCanceled(Manager):
+    def get_queryset(self):
+        return super().get_queryset().filter(status=self.model.Status.BEKOR_QILINDI)
+
+
+class OrderManagerArchived(Manager):
+    def get_queryset(self):
+        return super().get_queryset().filter(status=self.model.Status.ARXIVLANDI)
+
+
+class UserOperatorManager(Manager):
+    def get_queryset(self):
+        return super().get_queryset().filter(status=self.model.Type.OPERATOR)
+
+
+class UserManagerManager(Manager):
+    def get_queryset(self):
+        return super().get_queryset().filter(status=self.model.Type.MANAGER)
+
+
+class UserAdminManager(Manager):
+    def get_queryset(self):
+        return super().get_queryset().filter(status=self.model.Type.ADMIN)
+
+
+class UserDeliverManager(Manager):
+    def get_queryset(self):
+        return super().get_queryset().filter(status=self.model.Type.DELIVER)
+
+
+class UserUserManager(Manager):
+    def get_queryset(self):
+        return super().get_queryset().filter(status=self.model.Type.USER)

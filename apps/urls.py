@@ -10,7 +10,8 @@ from apps.views import (
     ProfileUpdateView, DistrictListView, OrderDetailView, OrderListView, PasswordUpdateView, MarketView, StreamListview,
     StreamCreateView, StreamDetailView, StatisticProductDetailView, AdminPageTemplateView,
     RequestListView, ConcursTemplateView, StreamStatisticsListView,
-    TransactionCreateView, TransactionListView, OperatorListView, OperatorDetailView
+    TransactionCreateView, TransactionListView, CurrierListView, OperatorListView, OperatorDeliveredView,
+    CurrierDetailView
 )
 
 urlpatterns = [
@@ -45,7 +46,11 @@ urlpatterns = [
     path('stream/create/', StreamCreateView.as_view(), name='stream_create'),
     path('stream/<int:pk>', StreamDetailView.as_view(), name='stream_detail'),
     path('stream/stats', StreamStatisticsListView.as_view(), name='stream_statistics'),
-    path('operators', OperatorListView.as_view(), name='operators_list'),
-    path('operators-detail', OperatorDetailView.as_view(), name='operators_detail')
+    path('curriers', CurrierListView.as_view(), name='curriers'),
+    path('operators_list', OperatorListView.as_view(), name='operator_list'),
+    path('operators_delivered', OperatorDeliveredView.as_view(), name='operator_delivered'),
+
+    path('curriers/', CurrierListView.as_view(), name='currier_list'),
+    path('curriers/<int:pk>/', CurrierDetailView.as_view(), name='currier_detail'),
 
 ]
