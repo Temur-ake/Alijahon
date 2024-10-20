@@ -1,0 +1,308 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Operatorlar bo'limi - Buyurtmalar - alijahon.uz</title>
+    <link rel="stylesheet" href="{% static 'apps/assets/css/bootstrap.min.css' %}">
+    <link rel="stylesheet" href="{% static 'apps/assets/css/font-awesome.min.css' %}">
+    <link rel="stylesheet" href="{% static 'apps/assets/css/styles.css' %}">
+    <style>
+        body {
+            background-color: #e9ecef;
+            font-family: 'Arial', sans-serif;
+        }
+
+        .navbar {
+            background-color: #0056b3;
+            padding: 10px 15px;
+            color: #fff;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .navbar a {
+            color: white;
+            text-decoration: none;
+            margin-left: 15px;
+        }
+
+        .sidebar {
+            background-color: #343a40;
+            width: 250px;
+            padding: 0;
+            position: fixed;
+            height: 100%;
+            overflow-y: auto;
+        }
+
+        .sidebar a {
+            height: 60px;
+            display: flex;
+            align-items: center;
+            text-decoration: none;
+            color: #fff;
+            padding: 0 15px;
+            transition: background-color 0.3s;
+        }
+
+        .sidebar a:hover,
+        .sidebar a.active {
+            background-color: #495057;
+        }
+
+        .main-content {
+            margin-left: 260px;
+            padding: 20px;
+        }
+
+        .footer {
+            margin-top: 20px;
+            text-align: center;
+            padding: 10px;
+            background-color: #343a40;
+            color: #fff;
+        }
+
+        .form-group {
+            margin-bottom: 1rem;
+        }
+
+        input[type="text"],
+        input[type="number"],
+        select {
+            border-radius: 8px;
+            border: 1px solid #ced4da;
+            padding: 10px;
+            font-size: 1rem;
+            width: 100%;
+        }
+
+        input[type="text"]:focus,
+        input[type="number"]:focus,
+        select:focus {
+            border-color: #0056b3;
+            outline: none;
+        }
+
+        .section-title {
+            font-size: 2rem;
+            font-weight: bold;
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .btn-primary {
+            background-color: #0056b3;
+            border: none;
+            color: white;
+            padding: 12px 20px;
+            font-size: 1.1rem;
+        }
+
+        .btn-primary:hover {
+            background-color: #004494;
+        }
+
+        .btn-danger1 {
+            background-color: red;
+            font-size: 1.5rem;
+            color: white;
+            margin-bottom: 30px;
+            margin-right: 50px;
+        }
+    </style>
+</head>
+
+<body>
+<nav class="navbar">
+    <div>Buyurtmalar</div>
+    <h4 class="btn-danger btn-sm" style="color:white;"><b>OPERATORLAR QISMI</b></h4>
+    <a href="/admin_page" class="btn btn-danger btn-sm" style="color:white;">Admin Page</a>
+</nav>
+
+<div class="sidebar">
+    <div class="list-group w-100 h-100">
+        <a href="{% url 'operator_list' %}?status=yangi"
+           class="list-group-item {% if request.GET.status == 'yangi' %}active{% endif %}">
+            <div><i class="fa fa-newspaper-o"></i> Yangi buyurtmalar</div>
+        </a>
+        <a href="{% url 'operator_list' %}?status=tayyor"
+           class="list-group-item {% if request.GET.status == 'tayyor' %}active{% endif %}">
+            <div><i class="fa fa-truck"></i> Dostavka tayyor</div>
+        </a>
+        <a href="{% url 'operator_list' %}?status=yetkazilmoqda"
+           class="list-group-item {% if request.GET.status == 'yetkazilmoqda' %}active{% endif %}">
+            <div><i class="fa fa-truck"></i> Yetkazilmoqda</div>
+        </a>
+        <a href="{% url 'operator_list' %}?status=arxivlandi"
+           class="list-group-item {% if request.GET.status == 'arxivlandi' %}active{% endif %}">
+            <div><i class="fa fa-archive"></i> Arxivlandi</div>
+        </a>
+        <a href="{% url 'operator_list' %}?status=yetkazib_berildi"
+           class="list-group-item {% if request.GET.status == 'yetkazib_berildi' %}active{% endif %}">
+            <div><i class="fa fa-shopping-cart"></i> Yetkazib berildi</div>
+        </a>
+        <a href="{% url 'operator_list' %}?status=bekor_qilindi"
+           class="list-group-item {% if request.GET.status == 'bekor_qilindi' %}active{% endif %}">
+            <div><i class="fa fa-shopping-cart"></i> Bekor qilindi</div>
+        </a>
+        <a href="{% url 'operator_list' %}?status=telefon_kotarmadi"
+           class="list-group-item {% if request.GET.status == 'telefon_kotarmadi' %}active{% endif %}">
+            <div><i class="fa fa-shopping-cart"></i> Telefon kotarmadi</div>
+        </a>
+        <a href="{% url 'operator_list' %}" class="list-group-item {% if not request.GET.status %}active{% endif %}">
+            <div><i class="fa fa-newspaper-o"></i> Hammasi</div>
+        </a>
+    </div>
+</div>
+
+<div class="main-content">
+    <div class="bg-light w-100 m-auto mt-4 p-4">
+        <h5 class="section-title">Operator Tafsilotlari</h5>
+
+        <form method="post" action="{% url 'operator_detail' order.id %}">
+            {% csrf_token %}
+
+            <div class="form-group">
+                <label for="id_status">Holat:</label>
+                <select name="status" id="id_status" class="form-control" required>
+                    {% for status_key, status_value in status_choices %}
+                        <option value="{{ status_key }}"
+                                {% if order.status == status_key %}selected{% endif %}>{{ status_value }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label for="id_product">Mahsulot:</label>
+                <select name="product" id="id_product" class="form-control" required>
+                    {% for product in products %}
+                        <option value="{{ product.id }}"
+                                {% if product.id == order.product.id %}selected{% endif %}>{{ product.name }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label for="id_quantity">Buyurtma soni:</label>
+                <input type="number" name="quantity" id="id_quantity" class="form-control" value="{{ order.quantity }}"
+                       required>
+            </div>
+
+            <div class="form-group">
+                <label for="id_full_name">Buyurtmaning egasi:</label>
+                <input type="text" name="full_name" id="id_full_name" class="form-control" value="{{ order.full_name }}"
+                       required>
+            </div>
+
+            <div class="form-group">
+                <label for="id_phone">Telefon:</label>
+                <input type="text" name="phone" id="id_phone" class="form-control" value="{{ order.phone }}" required>
+            </div>
+
+            <div class="form-group">
+                <label for="id_region">Viloyat:</label>
+                <select name="region" id="id_region" class="form-control" onchange="fetchDistricts(this.value)"
+                        required>
+                    <option value="">Viloyatni tanlang</option>
+                    {% for region in regions %}
+                        <option value="{{ region.id }}"
+                                {% if region.id == order.region.id %}selected{% endif %}>{{ region.name }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label for="id_district">Tuman:</label>
+                <select name="district" id="id_district" class="form-control" required>
+                    <option value="">Tumanni tanlang</option>
+                    {% for district in districts %}
+                        <option value="{{ district.id }}"
+                                {% if district.id == order.district.id %}selected{% endif %}>{{ district.name }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label for="id_owner">Mahsulot beruvchi (Operator):</label>
+                <select name="owner" id="id_owner" class="form-control" required>
+                    <option value="">Mahsulot beruvchini tanlang</option>
+                    {% for user in users %}
+                        <option value="{{ user.id }}"
+                                {% if user.id == order.owner.id %}selected{% endif %}>{{ user.phone }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label for="id_courier">Mahsulot yetkazib beruvchi:</label>
+                <select name="courier" id="id_courier" class="form-control" required>
+                    <option value="">Mahsulot yetkazib beruvchini tanlang</option>
+                    {% for courier in couriers %}
+                        <option value="{{ courier.id }}"
+                                {% if courier.id == order.courier.id %}selected{% endif %}>{{ courier.first_name }} {{ courier.last_name }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label for="id_stream">Oqim:</label>
+                <select name="stream" id="id_stream" class="form-control">
+                    <option value="">Oqimni tanlang</option>
+                    {% for stream in streams %}
+                        <option value="{{ stream.id }}"
+                                {% if stream.id == order.stream.id %}selected{% endif %}>{{ stream.name|default:'--' }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+
+            <input class="btn btn-primary" type="submit" value="Yangilash">
+        </form>
+
+        <div style="display: flex; justify-content: flex-end; margin-top: -40px; margin-right: 60px">
+            <form method="post" action="{% url 'delete_order' order.id %}" style="display:inline;">
+                {% csrf_token %}
+                <input class="btn btn-danger1" type="submit" value="O'chirish"
+                       onclick="return confirm('Siz haqiqatan ham bu buyurtmani o\'chirishni xohlaysizmi?');">
+            </form>
+        </div>
+    </div>
+
+    <div class="footer">
+        <p>&copy; 2024 Online Bozor. Barcha huquqlar himoyalangan.</p>
+    </div>
+</div>
+
+<script>
+    function fetchDistricts(regionId) {
+        const districtSelect = document.getElementById('id_district');
+        districtSelect.innerHTML = '<option value="">Tumanni tanlang</option>';
+
+        if (regionId) {
+            fetch(`/districts?region_id=${regionId}`)
+                .then(response => response.json())
+                .then(data => {
+                    data.forEach(district => {
+                        const option = document.createElement('option');
+                        option.value = district.id;
+                        option.textContent = district.name;
+                        districtSelect.appendChild(option);
+                    });
+
+                    // Pre-select the district if it exists
+                    const selectedDistrictId = "{{ order.district.id }}";
+                    if (selectedDistrictId) {
+                        districtSelect.value = selectedDistrictId;
+                    }
+                })
+                .catch(error => console.error('Error fetching districts:', error));
+        }
+    }
+</script>
+
+</body>
+</html>
