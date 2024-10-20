@@ -16,7 +16,7 @@
                                         <h3>Mahsulot: {{ order.product.name }}</h3>  <!-- Access product name -->
                                         <small>Mahsulot narxi: {{ order.price }}</small>
                                         <!-- Access product price -->
-                                        <p>Soni: 1</p>
+                                        <p>Soni: {{ order.quantity }}</p>
                                     </div>
                                 {% endif %}
                             {% endfor %}

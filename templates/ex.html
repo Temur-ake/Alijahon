@@ -17,3 +17,22 @@
         cursor: not-allowed; /* Show not-allowed cursor */
     }
 </style>
+
+
+    def save(self, *args, **kwargs):
+        if self.pk:
+            original_order = Order.objects.get(pk=self.pk)
+            if original_order.status != self.status and self.status == Order.Type.YETKAZIB_BERILDI:
+                if self.stream and self.stream.owner:
+                    total_discount = self.stream.discount * int(self.quantity)
+                    self.stream.owner.balance += total_discount
+                    self.stream.owner.save()
+
+                if self.product.managers_profit:
+                    total_profit = self.product.managers_profit * int(self.quantity)
+                    managers = User.objects.filter(type='manager')
+                    for manager in managers:
+                        manager.balance += total_profit
+                        manager.save()
+
+        super().save(*args, **kwargs)

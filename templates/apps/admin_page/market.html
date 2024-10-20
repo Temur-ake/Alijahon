@@ -71,10 +71,10 @@
                             <a href="{% url 'market_page' %}"
                                class="btn btn-default {{ request.path|is_current_category }}">
                                 Hammasi </a>
-                            <a href="/admin_page/market/?category=top" class="btn btn-default"> Top tovarlar </a>
+{#                            <a href="/admin_page/market/?category=top" class="btn btn-default"> Top tovarlar </a>#}
                             {% for category in categories %}
                                 <a href="?category={{ category.slug }}"
-                                   class="btn btn-default {{ request.path|is_current_category:category.slug }}"> {{ category.name }} </a>
+                                   class="btn btn-default"> {{ category.name }} </a>
                             {% endfor %}
                         </div>
                         <div class="search-box" style="width: 100%;">
@@ -126,14 +126,14 @@
 
 
                                 <a href="https://t.me/alijahon_uz_Internet_magazin/1595"
-                                   class="btn bg-danger text-white mt-2">Reklama
+                                   class="btn  text-white mt-2" style="background-color: red">Reklama
                                     Posti</a>
                                 <button class="btn btn-primary btn_open_modal" type="button" data-bs-toggle="modal"
-                                        data-bs-target="#exampleModal" name="{{ product.id }}">
+                                        data-bs-target="#exampleModal" style="background-color: midnightblue" name="{{ product.id }}">
                                     Oqim yaratish
                                 </button>
                                 <a href="{% url 'product_statistics' product.pk %}"
-                                   class="btn bg-danger text-white mt-2">Batafsil</a>
+                                   class="btn  text-white mt-2" style="background-color: red">Batafsil</a>
                             </div>
                         </div>
 

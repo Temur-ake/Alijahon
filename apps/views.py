@@ -2,12 +2,12 @@ from datetime import timedelta
 
 from django.contrib import messages
 from django.contrib.auth import login, logout
-from django.contrib.auth.mixins import LoginRequiredMixin
+from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from django.contrib.auth.views import LoginView
 from django.core.exceptions import ValidationError
 from django.db.models import Q, Count, F, Sum
 from django.http import JsonResponse
-from django.shortcuts import redirect, render
+from django.shortcuts import redirect, render, get_object_or_404
 from django.urls import reverse_lazy
 from django.utils import timezone
 from django.utils.timezone import now
@@ -15,9 +15,9 @@ from django.views import View
 from django.views.generic import ListView, DetailView, UpdateView, CreateView, TemplateView
 
 from apps.forms import CustomAuthenticationForm, CreateOrderForm, ChangePasswordModelForm, StreamCreateForm, \
-    TransactionForm, CurrierProfileForm
+    TransactionForm
 from apps.models import Product, Category, User, Region, District, Order, Stream, Concurs, SiteDeliveryPrices, \
-    Transaction, CurrierProfile
+    Transaction
 
 # ==================================================================================================================================================
 '''User View'''
@@ -188,19 +188,15 @@ class MarketView(ListView):
 
     def get_queryset(self):
         qs = super().get_queryset()
-        name = self.request.GET.get('name')
-        slug = self.kwargs.get('slug')
-        top = self.request.GET.get('category')
-
-        if top:
-            qs = Product.objects.filter(order__status=Order.Type.YETKAZIB_BERILDI).annotate(
-                count=Count('order')).order_by('-count')
+        name = self.request.GET.get('search')
+        slug = self.request.GET.get('category')
 
         if slug:
             qs = qs.filter(category__slug=slug)
 
         if name:
-            qs = Product.objects.filter(Q(name__icontains=name) | Q(description__icontains=name))
+            qs = qs.filter(Q(name__icontains=name) | Q(description__icontains=name))
+
         return qs
 
     def get_context_data(self, *, object_list=None, **kwargs):
@@ -277,23 +273,22 @@ class StreamStatisticsListView(ListView):
         qs = super().get_queryset().filter(owner=self.request.user)
         period = self.request.GET.get('period')
 
+        now = timezone.now()
+
         if period == 'today':
-            qs = qs.filter(orders__created_at__date=timezone.now().date())
+            qs = qs.filter(orders__created_at__date=now.date())
 
         elif period == 'last_day':
-            start_date = timezone.now() - timedelta(days=1)
-            end_date = timezone.now()
-            qs = qs.filter(orders__created_at__range=(start_date, end_date))
+            start_date = now - timedelta(days=1)
+            qs = qs.filter(orders__created_at__range=(start_date, now))
 
         elif period == 'weekly':
-            start_date = timezone.now() - timedelta(days=7)
-            end_date = timezone.now()
-            qs = qs.filter(orders__created_at__range=(start_date, end_date))
+            start_date = now - timedelta(weeks=1)
+            qs = qs.filter(orders__created_at__range=(start_date, now))
 
         elif period == 'monthly':
-            start_date = timezone.now() - timedelta(days=30)
-            end_date = timezone.now()
-            qs = qs.filter(orders__created_at__range=(start_date, end_date))
+            start_date = now - timedelta(days=30)
+            qs = qs.filter(orders__created_at__range=(start_date, now))
 
         qs = qs.annotate(
             yangi=Count('orders', Q(orders__status='yangi')),
@@ -325,10 +320,12 @@ class RequestListView(ListView):
     context_object_name = 'orders'
 
     def get_queryset(self):
-        return super().get_queryset().filter(stream__isnull=False, owner=self.request.user)
+        return super().get_queryset().filter(stream__owner=self.request.user,
+                                             status=Order.Type.YETKAZIB_BERILDI).select_related('owner', 'product',
+                                                                                                'stream', 'region')
 
 
-class ConcursTemplateView(ListView):
+class ConcursListView(ListView):
     queryset = User.objects.all()
     template_name = 'apps/admin_page/concurs.html'
     context_object_name = 'users'
@@ -336,7 +333,11 @@ class ConcursTemplateView(ListView):
     def get_queryset(self):
         qs = super().get_queryset()
         qs.filter(stream__owner=self.request.user)
-        qs = qs.filter(orders__status='yetkazib_berildi', orders__stream__isnull=False).annotate(
+        active_concurs = Concurs.objects.filter(is_started=True).first()
+        start_date = active_concurs.start_date
+        end_date = active_concurs.end_date
+        qs = qs.filter(orders__status='yetkazib_berildi', orders__stream__isnull=False,
+                       orders__created_at__range=(start_date, end_date)).annotate(
             count=Sum('orders__quantity')).values(
             'first_name', 'last_name', 'count').order_by('-count')
         return qs
@@ -356,8 +357,13 @@ class TransactionListView(ListView):
 
     def get_queryset(self):
         qs = super().get_queryset()
-        qs = qs.filter(owner_id=self.request.user)
+        qs = qs.filter(owner=self.request.user)
         return qs
+
+    def get_context_data(self, *, object_list=None, **kwargs):
+        ctx = super().get_context_data()
+        ctx['tolangan_sum'] = self.get_queryset().filter(status='paid').aggregate(Sum('amount'))['amount__sum'] or 0
+        return ctx
 
 
 class TransactionCreateView(CreateView):
@@ -370,17 +376,18 @@ class TransactionCreateView(CreateView):
         form.instance.owner = self.request.user
         entered_amount = form.cleaned_data['amount']
 
-        if self.request.user.balance < entered_amount:
-            form.add_error('amount', "Buncha mablag' mavjud emas.")
+        if entered_amount < 100000:
+            form.add_error('amount', "Kiritilgan mablag' 100 000 mingdan kam bo'lmasligi kerak !")
             return self.form_invalid(form)
 
-        # Save the transaction
+        if self.request.user.balance < entered_amount:
+            form.add_error('amount', "Mablag' yetarli emas")
+            return self.form_invalid(form)
+
         transaction = form.save(commit=False)
 
-        transaction_status = form.cleaned_data['status']
-        if transaction_status == 'PAID':
-            self.request.user.balance -= entered_amount
-            self.request.user.save()
+        self.request.user.balance -= entered_amount
+        self.request.user.save()
 
         transaction.save()
 
@@ -388,29 +395,129 @@ class TransactionCreateView(CreateView):
 
         return super().form_valid(form)
 
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['transactions'] = Transaction.objects.filter(owner=self.request.user)
+        context['tolangan_sum'] = context['transactions'].filter(status='paid').aggregate(Sum('amount'))[
+                                      'amount__sum'] or 0
+        return context
 
-class OperatorListView(ListView):
-    model = User
+
+class OperatorRequiredMixin(UserPassesTestMixin):
+    def test_func(self):
+        return self.request.user.type == User.Type.OPERATOR
+
+
+class OperatorListView(OperatorRequiredMixin, ListView):
+    queryset = Order.objects.order_by('-created_at')
     template_name = 'apps/operators/operator-list.html'
+    context_object_name = 'orders'
 
     def get_queryset(self):
         qs = super().get_queryset()
         status = self.request.GET.get('status')
+        search = self.request.GET.get('search')
 
-        # if status == 'new':
+        if status:
+            qs = qs.filter(status=status)
+
+        if search:
+            qs = qs.filter(
+                Q(phone__icontains=search) |
+                Q(product__name__icontains=search) |
+                Q(full_name__icontains=search) |
+                Q(stream__name__icontains=search)
+            )
+        return qs.select_related('product', 'courier')
+
+    def get_context_data(self, **kwargs):
+        ctx = super().get_context_data(**kwargs)
+        ctx['regions'] = Region.objects.all()
+        ctx['districts'] = District.objects.all()
+        ctx['products'] = Product.objects.all()
+        ctx['streams'] = Stream.objects.all()
+        ctx['couriers'] = User.objects.filter(type=User.Type.DRIVER)
+        ctx['users'] = User.objects.all()
+        return ctx
 
 
-class OperatorDeliveredView(TemplateView):
-    template_name = 'apps/operators/operator-detail.html'
+class OperatorCreateView(OperatorRequiredMixin, View):
+    model = Order
+    template_name = 'apps/operators/operator-list.html'
+    success_url = reverse_lazy('operator_list')
+
+    def get(self, request):
+        # Render the form for creating a new order
+        products = Product.objects.all()
+        regions = Region.objects.all()
+        streams = Stream.objects.all()
+        users = User.objects.all()
+        couriers = User.objects.filter(type=User.Type.DRIVER)
+
+        return render(request, self.template_name, {
+            'products': products,
+            'regions': regions,
+            'streams': streams,
+            'users': users,
+            'couriers': couriers,
+        })
+
+    def post(self, request):
+        order = Order()
+        order.product_id = request.POST.get('product')
+        order.full_name = request.POST.get('full_name')
+        order.phone = request.POST.get('phone')
+        order.quantity = request.POST.get('quantity')
+        order.region_id = request.POST.get('region')
+        order.district_id = request.POST.get('district')
+        order.stream_id = request.POST.get('stream')
+        order.owner_id = request.POST.get('owner')
+        order.courier_id = request.POST.get('courier')
+        order.save()
+        return redirect(self.success_url)
 
 
-class CurrierListView(ListView):
-    model = CurrierProfile
-    template_name = 'apps/operators/currier-list.html'
-    context_object_name = 'curriers'
+class OperatorDetailView(OperatorRequiredMixin, View):
+    def get(self, request, pk):
+        order = get_object_or_404(Order, pk=pk)
+        products = Product.objects.all()
+        regions = Region.objects.all()
+        streams = Stream.objects.all()
+        districts = District.objects.filter(region=order.region)
+        users = User.objects.all()
+        couriers = User.objects.filter(type=User.Type.DRIVER)
+
+        status_choices = Order.Type.choices
+
+        return render(request, 'apps/operators/operator-detail.html', {
+            'order': order,
+            'products': products,
+            'regions': regions,
+            'streams': streams,
+            'districts': districts,
+            'status_choices': status_choices,
+            'users': users,
+            'couriers': couriers,
+        })
+
+    def post(self, request, pk):
+        order = get_object_or_404(Order, pk=pk)
+        order.product_id = request.POST.get('product')
+        order.full_name = request.POST.get('full_name')
+        order.phone = request.POST.get('phone')
+        order.quantity = request.POST.get('quantity')
+        order.region_id = request.POST.get('region')
+        order.district_id = request.POST.get('district')
+        order.stream_id = request.POST.get('stream')
+        order.status = request.POST.get('status')
+        order.owner_id = request.POST.get('owner')  # Add the owner
+        order.courier_id = request.POST.get('courier')  # Add the courier
+        order.save()
+        return redirect('operator_list')
 
 
-class CurrierDetailView(DetailView):
-    model = CurrierProfile
-    template_name = 'apps/operators/currier-detail.html'
-    context_object_name = 'currier'
+class DeleteOrderView(OperatorRequiredMixin, View):
+    def post(self, request, pk):
+        order = get_object_or_404(Order, pk=pk)
+        order.delete()
+        return redirect('operator_list')

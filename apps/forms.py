@@ -5,7 +5,7 @@ from django.core.exceptions import ValidationError
 from django.forms import CharField, PasswordInput, Form, ModelForm
 from django.utils.translation import gettext_lazy as _
 
-from apps.models import User, Order, Stream, Product, Transaction, CurrierProfile
+from apps.models import User, Order, Stream, Product, Transaction
 
 
 class CustomAuthenticationForm(Form):
@@ -141,9 +141,3 @@ class TransactionForm(ModelForm):
         if amount <= 0:
             raise ValidationError("Amount must be greater than zero.")
         return amount
-
-
-class CurrierProfileForm(ModelForm):
-    class Meta:
-        model = CurrierProfile
-        fields = ['vehicle_type', 'license_number', 'availability_status']

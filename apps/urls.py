@@ -9,9 +9,9 @@ from apps.views import (
     ProfileView,
     ProfileUpdateView, DistrictListView, OrderDetailView, OrderListView, PasswordUpdateView, MarketView, StreamListview,
     StreamCreateView, StreamDetailView, StatisticProductDetailView, AdminPageTemplateView,
-    RequestListView, ConcursTemplateView, StreamStatisticsListView,
-    TransactionCreateView, TransactionListView, CurrierListView, OperatorListView, OperatorDeliveredView,
-    CurrierDetailView
+    RequestListView, ConcursListView, StreamStatisticsListView,
+    TransactionCreateView, TransactionListView, OperatorListView, OperatorCreateView, OperatorDetailView,
+    DeleteOrderView,
 )
 
 urlpatterns = [
@@ -40,17 +40,15 @@ urlpatterns = [
     path('admin_page/urls/', StreamListview.as_view(), name='stream_list'),
     path('admin_page/product/<int:pk>', StatisticProductDetailView.as_view(), name='product_statistics'),
     path('admin_page/requests', RequestListView.as_view(), name='request_page'),
-    path('admin_page/competition', ConcursTemplateView.as_view(), name='competition_page'),
+    path('admin_page/competition', ConcursListView.as_view(), name='competition_page'),
     path('admin_page/withdraw/create', TransactionCreateView.as_view(), name='tolov_create_page'),
     path('admin_page/withdraw', TransactionListView.as_view(), name='tolov_page'),
     path('stream/create/', StreamCreateView.as_view(), name='stream_create'),
     path('stream/<int:pk>', StreamDetailView.as_view(), name='stream_detail'),
     path('stream/stats', StreamStatisticsListView.as_view(), name='stream_statistics'),
-    path('curriers', CurrierListView.as_view(), name='curriers'),
     path('operators_list', OperatorListView.as_view(), name='operator_list'),
-    path('operators_delivered', OperatorDeliveredView.as_view(), name='operator_delivered'),
-
-    path('curriers/', CurrierListView.as_view(), name='currier_list'),
-    path('curriers/<int:pk>/', CurrierDetailView.as_view(), name='currier_detail'),
+    path('operators_list/create_order', OperatorCreateView.as_view(), name='create_operator_order'),
+    path('operators_list/<int:pk>/', OperatorDetailView.as_view(), name='operator_detail'),
+    path('delete_order/<int:pk>/', DeleteOrderView.as_view(), name='delete_order'),
 
 ]

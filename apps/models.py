@@ -1,7 +1,6 @@
 from django.contrib.auth.models import AbstractUser
 from django.db.models import TextChoices, CharField, TextField, ImageField, ForeignKey, CASCADE, Model, SlugField, \
-    PositiveSmallIntegerField, DateTimeField, SET_NULL, PositiveIntegerField, DateField, BooleanField, FileField, \
-    Manager, OneToOneField
+    PositiveSmallIntegerField, DateTimeField, SET_NULL, PositiveIntegerField, DateField, BooleanField, Manager
 from django.utils.text import slugify
 
 from managers import CustomUserManager
@@ -116,6 +115,9 @@ class Product(SlugBaseModel, BaseModel):
                                             null=True,
                                             blank=True, verbose_name="Oqim egasiga beriladigan pul")
     discount_market = TextField(null=True, blank=True, verbose_name="Market Page Uchun Chegrima")
+    managers_profit = PositiveIntegerField(help_text="so'mda", default=0,
+                                           null=True,
+                                           blank=True, verbose_name="Managerga (Temur) beriladigan pul")
 
     class Meta:
         ordering = ['-created_at']
@@ -138,7 +140,7 @@ class Stream(BaseModel):
 class Order(BaseModel):
     class Type(TextChoices):
         YANGI = 'yangi', 'YANGI'
-        TAYYOR = 'Dastavkaga tayyor', 'DASTAVKAGA TAYYOR'
+        TAYYOR = 'tayyor', 'TAYYOR'
         YETKAZILMOQDA = 'yetkazilmoqda', 'YETKAZILMOQDA'
         YETKAZIB_BERILDI = 'yetkazib_berildi', 'YETKAZIB_BERILDI'
         TELEFON_KOTARMADI = "telefon_kotarmadi", "TELEFON_KOTARMADI"
@@ -155,6 +157,8 @@ class Order(BaseModel):
     district = ForeignKey(District, CASCADE, null=True, blank=True, verbose_name="Buyurtma boradigan tuman")
     stream = ForeignKey(Stream, SET_NULL, null=True, blank=True, related_name='orders',
                         verbose_name="Buyurtmaning oqimi")
+    courier = ForeignKey(User, SET_NULL, related_name='couriers', null=True, blank=True,
+                         verbose_name="Mahsulot Yetkazib Beruvchi", default=User.Type.DRIVER)
 
     @property
     def price(self):
@@ -163,6 +167,43 @@ class Order(BaseModel):
         else:
             order_price = self.product.price
         return order_price
+
+    def save(self, *args, **kwargs):
+        if self.pk:  # Check if updating
+            original_order = Order.objects.get(pk=self.pk)
+            if original_order.status != self.status and self.status == Order.Type.YETKAZIB_BERILDI:
+                if original_order.stream is not None:
+                    total_discount = self.stream.discount * int(self.quantity)
+
+                    current_balance = self.stream.owner.balance or 0
+                    self.stream.owner.balance = current_balance + total_discount
+                    self.stream.owner.save()
+
+                if self.product.managers_profit:
+                    total_profit = self.product.managers_profit * int(self.quantity)
+                    managers = User.objects.filter(type='manager')
+                    for manager in managers:
+                        manager.balance += total_profit
+                        manager.save()
+
+        super().save(*args, **kwargs)
+
+    # def save1(self, *args, **kwargs):
+    #     if self.pk:
+    #         original_order = Order.objects.get(pk=self.pk)
+    #         if original_order.status != self.status and self.status == Order.Type.YETKAZIB_BERILDI:
+    #             if self.product.managers_profit:
+    #                 total = self.product.managers_profit * int(
+    #                     self.quantity)
+    #
+    #                 managers = User.objects.filter(
+    #                     type='manager')
+    #
+    #                 for manager in managers:
+    #                     manager.balance += total
+    #                     manager.save()
+    #
+    #     super().save(*args, **kwargs)
 
     def __str__(self):
         return self.full_name
@@ -196,16 +237,6 @@ class Transaction(BaseModel):
 
     def __str__(self):
         return self.owner.type
-
-
-class CurrierProfile(Model):
-    user = OneToOneField(User, on_delete=CASCADE, related_name="currier_profile")
-    vehicle_type = CharField(max_length=50, verbose_name="Vehicle Type")
-    license_number = CharField(max_length=100, verbose_name="License Number")
-    availability_status = BooleanField(default=True, verbose_name="Is Available")
-
-    def __str__(self):
-        return f"{self.user.phone} - {self.vehicle_type}"
 
 
 # ==================================================================================================================================================
@@ -300,39 +331,39 @@ class UserProxyUserModel(User):
 '''Proxy Managers'''
 
 
-class OrderManagerNew(Manager):
-    def get_queryset(self):
-        return super().get_queryset().filter(status=self.model.Status.YANGI)
-
-
-class OrderManagerReady(Manager):
-    def get_queryset(self):
-        return super().get_queryset().filter(status=self.model.Status.TAYYOR)
-
-
-class OrderManagerDelivering(Manager):
-    def get_queryset(self):
-        return super().get_queryset().filter(status=self.model.Status.YETKAZILMOQDA)
-
-
-class OrderManagerDelivered(Manager):
-    def get_queryset(self):
-        return super().get_queryset().filter(status=self.model.Status.YETKAZIB_BERILDI)
-
-
-class OrderManagerNoAnswer(Manager):
-    def get_queryset(self):
-        return super().get_queryset().filter(status=self.model.Status.TELEFON_KOTARMADI)
-
-
-class OrderManagerCanceled(Manager):
-    def get_queryset(self):
-        return super().get_queryset().filter(status=self.model.Status.BEKOR_QILINDI)
-
-
-class OrderManagerArchived(Manager):
-    def get_queryset(self):
-        return super().get_queryset().filter(status=self.model.Status.ARXIVLANDI)
+# class OrderManagerNew(Manager):
+#     def get_queryset(self):
+#         return super().get_queryset().filter(status=self.model.Status.YANGI)
+#
+#
+# class OrderManagerReady(Manager):
+#     def get_queryset(self):
+#         return super().get_queryset().filter(status=self.model.Status.TAYYOR)
+#
+#
+# class OrderManagerDelivering(Manager):
+#     def get_queryset(self):
+#         return super().get_queryset().filter(status=self.model.Status.YETKAZILMOQDA)
+#
+#
+# class OrderManagerDelivered(Manager):
+#     def get_queryset(self):
+#         return super().get_queryset().filter(status=self.model.Status.YETKAZIB_BERILDI)
+#
+#
+# class OrderManagerNoAnswer(Manager):
+#     def get_queryset(self):
+#         return super().get_queryset().filter(status=self.model.Status.TELEFON_KOTARMADI)
+#
+#
+# class OrderManagerCanceled(Manager):
+#     def get_queryset(self):
+#         return super().get_queryset().filter(status=self.model.Status.BEKOR_QILINDI)
+#
+#
+# class OrderManagerArchived(Manager):
+#     def get_queryset(self):
+#         return super().get_queryset().filter(status=self.model.Status.ARXIVLANDI)
 
 
 class UserOperatorManager(Manager):

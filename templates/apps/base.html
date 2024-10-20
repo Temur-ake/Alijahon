@@ -11,6 +11,10 @@
             padding: 12px;
         }
 
+        .main {
+            background-color: midnightblue;
+        }
+
         .header_menu .btn-default {
             border: 1px solid #ddd;
             border-radius: 20px;
@@ -23,6 +27,8 @@
             background-color: #5c636a;
             color: #fff;
         }
+        
+
     </style>
 
 
@@ -123,7 +129,14 @@
     /></noscript>
     <!-- End Meta Pixel Code -->
 
-
+    <style>
+        {#.container {#}
+        {#    background-color: blueviolet; /* Light grey background */#}
+        {#padding: 20px; /* Add some padding */#}
+        {#border-radius: 8px; /* Rounded corners */#}
+        {
+        #}#}
+    </style>
 </head>
 
 <body>
@@ -152,16 +165,18 @@
             <div class="d-flex align-items-center">
                 <div class="toggle-icon-wrapper">
 
-                    <button class="btn navbar-toggler-humburger-icon navbar-vertical-toggle" data-bs-toggle="tooltip"
-                            data-bs-placement="left" title="Toggle Navigation"><span class="navbar-toggle-icon"><span
-                            class="toggle-line"></span></span></button>
+                    <button class="btn navbar-toggler-humburger-icon navbar-vertical-toggle"
+
+                    " title="Toggle Navigation"><span
+                        class="navbar-toggle-icon"><span
+                        class="toggle-line"></span></span></button>
 
                 </div>
                 <a class="navbar-brand" href="">
                     <div class="d-flex align-items-center py-3"><img class="me-2"
-                                                                     src="{% static 'apps/assets/img/fata.png' %}"
+                                                                     src="{% static 'apps/assets/img/mmm.jpg' %}"
                                                                      alt="" width="40"/><span
-                            class="font-sans-serif" style="color: red">alijahon</span>
+                            class="font-sans-serif" style="color: white">1000 xil</span>
                     </div>
                 </a>
             </div>
@@ -242,7 +257,7 @@
                                             </div>
                                         </a>
                                     </li>
-                                    
+
                                 </ul>
                             {% endif %}
 
@@ -306,11 +321,11 @@
                         </div>
                     </li>
 
-{#                    <li class="nav-item">#}
-{#                        <div class="theme-control-toggle px-2">#}
-{#                            <a href="/admin_page/coins">Tangalar: 0</a>#}
-{#                        </div>#}
-{#                    </li>#}
+                    {#                    <li class="nav-item">#}
+                    {#                        <div class="theme-control-toggle px-2">#}
+                    {#                            <a href="/admin_page/"><img style="height: 20px;width: 25px" src="{% static 'apps/assets/img/mm.jpg' %}">#}
+                    {#                        </div>#}
+                    {#                    </li>#}
 
 
                     <li class="nav-item dropdown">
@@ -319,6 +334,14 @@
                            aria-haspopup="true" aria-expanded="false">
                             <div class="avatar avatar-xl">
                                 <img class="rounded-circle" src="
+                                        
+                                        
+                                        
+                                        
+                                        
+                                        
+                                        
+                                        
                                         {% if user.image %}{{ user.image.url }}{% else %}{% static 'apps/assets/img/nouser.png' %}{% endif %}"
                                      alt="card"/>
                             </div>

@@ -1,5 +1,10 @@
 {% extends 'apps/base.html' %}
-
+<style>
+    .bg-info1 {
+        background-color: midnightblue;
+        color: red;
+    }
+</style>
 
 {% block base %}
     <div class="card mb-3">
@@ -38,7 +43,7 @@
                             <th scope="col">Bekor qilindi</th>
                             <th scope="col">Arxivlandi</th>
                         </tr>
-                        <tr class="bg-info">
+                        <tr class="bg-info1" style="background-color: midnightblue; color: white">
                             <td> JAMI</td>
                             <td></td>
                             <td> {{ streams.aggregates.total_tashrif|default:'' }}</td>
@@ -73,7 +78,7 @@
 
 
 
-                        <tr class="bg-info">
+                        <tr class="bg-info1" style="background-color: midnightblue; color: white">
                             <td> JAMI</td>
                             <td></td>
                             <td> {{ streams.aggregates.total_tashrif|default:'' }}</td>
