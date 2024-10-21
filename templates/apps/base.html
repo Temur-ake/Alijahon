@@ -344,6 +344,7 @@
 
 
 
+                                        
                                         {% if user.image %}{{ user.image.url }}{% else %}{% static 'apps/assets/img/nouser.png' %}{% endif %}"
                                      alt="card"/>
                             </div>
@@ -367,7 +368,7 @@
                                         <span>Adminlar uchun</span>
                                     </a>
 
-                                    {% if user.type == 'operator' %}
+                                    {% if user.type == 'admin_side' %}
                                         <a class="dropdown-item header_navbar_lang_menu_dropdown_item"
                                            href="{{ request.scheme }}://{{ request.get_host }}/operators_list">
                                             <span class="fas fa-crown me-1"></span>
@@ -377,6 +378,12 @@
                                            href="{{ request.scheme }}://{{ request.get_host }}/admin">
                                             <span class="fas fa-crown me-1"></span>
                                             Adminka qismi
+                                        </a>
+                                    {% elif user.type == 'operator' %}
+                                        <a class="dropdown-item header_navbar_lang_menu_dropdown_item"
+                                           href="{{ request.scheme }}://{{ request.get_host }}/operators_list">
+                                            <span class="fas fa-crown me-1"></span>
+                                            Operator qismi
                                         </a>
                                     {% endif %}
 
