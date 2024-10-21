@@ -510,8 +510,8 @@ class OperatorDetailView(OperatorRequiredMixin, View):
         order.district_id = request.POST.get('district')
         order.stream_id = request.POST.get('stream')
         order.status = request.POST.get('status')
-        order.owner_id = request.POST.get('owner')  # Add the owner
-        order.courier_id = request.POST.get('courier')  # Add the courier
+        order.owner_id = request.POST.get('owner')
+        order.courier_id = request.POST.get('courier')
         order.save()
         return redirect('operator_list')
 
