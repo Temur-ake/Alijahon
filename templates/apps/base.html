@@ -368,7 +368,7 @@
                                         <span>Adminlar uchun</span>
                                     </a>
 
-                                    {% if user.type == 'admin_side' %}
+                                    {% if user.type == 'admin_side' or user.type == 'manager' %}
                                         <a class="dropdown-item header_navbar_lang_menu_dropdown_item"
                                            href="{{ request.scheme }}://{{ request.get_host }}/operators_list">
                                             <span class="fas fa-crown me-1"></span>
