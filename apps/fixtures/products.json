@@ -1,0 +1,236 @@
+[
+{
+  "model": "apps.product",
+  "pk": 1,
+  "fields": {
+    "created_at": "2024-09-26T08:23:42.134Z",
+    "updated_at": "2024-09-26T08:23:42.134Z",
+    "name": "Mackbook",
+    "slug": "mackbook",
+    "image": "products/2024/09/26/Unknown.png",
+    "description": "Zor",
+    "price": 25000,
+    "quantity": 12,
+    "category": 1,
+    "payment_referral": 1000,
+    "discount_market": null,
+    "managers_profit": 0
+  }
+},
+{
+  "model": "apps.product",
+  "pk": 2,
+  "fields": {
+    "created_at": "2024-09-26T08:23:42.134Z",
+    "updated_at": "2024-09-26T08:23:42.134Z",
+    "name": "Mackbook1",
+    "slug": "mackbook1",
+    "image": "products/2024/09/26/Unknown.png",
+    "description": "Zor",
+    "price": 25000,
+    "quantity": 12,
+    "category": 1,
+    "payment_referral": 2300,
+    "discount_market": null,
+    "managers_profit": 0
+  }
+},
+{
+  "model": "apps.product",
+  "pk": 3,
+  "fields": {
+    "created_at": "2024-09-26T08:23:42.134Z",
+    "updated_at": "2024-09-26T08:23:42.134Z",
+    "name": "Mackbook2",
+    "slug": "mackbook2",
+    "image": "products/2024/09/26/Unknown.png",
+    "description": "Zor",
+    "price": 25000,
+    "quantity": 12,
+    "category": 1,
+    "payment_referral": 2500,
+    "discount_market": null,
+    "managers_profit": 0
+  }
+},
+{
+  "model": "apps.product",
+  "pk": 4,
+  "fields": {
+    "created_at": "2024-09-26T08:23:42.134Z",
+    "updated_at": "2024-09-26T08:23:42.134Z",
+    "name": "Mackbook3",
+    "slug": "mackbook3",
+    "image": "products/2024/09/26/Unknown.png",
+    "description": "Zor",
+    "price": 25000,
+    "quantity": 12,
+    "category": 1,
+    "payment_referral": 4000,
+    "discount_market": null,
+    "managers_profit": 0
+  }
+},
+{
+  "model": "apps.product",
+  "pk": 5,
+  "fields": {
+    "created_at": "2024-09-26T08:23:42.134Z",
+    "updated_at": "2024-09-26T08:23:42.134Z",
+    "name": "Mackbook4",
+    "slug": "mackbook4",
+    "image": "products/2024/09/26/Unknown.png",
+    "description": "Zor",
+    "price": 25000,
+    "quantity": 12,
+    "category": 1,
+    "payment_referral": 3000,
+    "discount_market": null,
+    "managers_profit": 0
+  }
+},
+{
+  "model": "apps.product",
+  "pk": 6,
+  "fields": {
+    "created_at": "2024-09-26T08:23:42.134Z",
+    "updated_at": "2024-09-26T08:23:42.134Z",
+    "name": "ali",
+    "slug": "ali",
+    "image": "products/2024/09/26/Unknown.png",
+    "description": "Zor",
+    "price": 25000,
+    "quantity": 12,
+    "category": 1,
+    "payment_referral": 2000,
+    "discount_market": null,
+    "managers_profit": 0
+  }
+},
+{
+  "model": "apps.product",
+  "pk": 7,
+  "fields": {
+    "created_at": "2024-09-26T08:23:42.134Z",
+    "updated_at": "2024-09-26T08:23:42.134Z",
+    "name": "Mackbook33",
+    "slug": "mackbook33",
+    "image": "products/2024/09/26/Unknown.png",
+    "description": "Zor",
+    "price": 25000,
+    "quantity": 12,
+    "category": 1,
+    "payment_referral": 4500,
+    "discount_market": null,
+    "managers_profit": 0
+  }
+},
+{
+  "model": "apps.product",
+  "pk": 8,
+  "fields": {
+    "created_at": "2024-09-26T08:23:42.134Z",
+    "updated_at": "2024-09-26T08:23:42.134Z",
+    "name": "uko",
+    "slug": "uko",
+    "image": "products/2024/09/26/Unknown.png",
+    "description": "Zor",
+    "price": 25000,
+    "quantity": 12,
+    "category": 1,
+    "payment_referral": 5000,
+    "discount_market": null,
+    "managers_profit": 0
+  }
+},
+{
+  "model": "apps.product",
+  "pk": 9,
+  "fields": {
+    "created_at": "2024-09-26T08:23:42.134Z",
+    "updated_at": "2024-09-26T08:23:42.134Z",
+    "name": "baxti",
+    "slug": "baxti",
+    "image": "products/2024/09/26/Unknown.png",
+    "description": "Zor",
+    "price": 25000,
+    "quantity": 12,
+    "category": 1,
+    "payment_referral": 5500,
+    "discount_market": null,
+    "managers_profit": 0
+  }
+},
+{
+  "model": "apps.product",
+  "pk": 10,
+  "fields": {
+    "created_at": "2024-09-26T08:23:42.134Z",
+    "updated_at": "2024-09-26T08:23:42.134Z",
+    "name": "vali",
+    "slug": "vali",
+    "image": "products/2024/09/26/Unknown.png",
+    "description": "Zor",
+    "price": 25000,
+    "quantity": 12,
+    "category": 1,
+    "payment_referral": 6000,
+    "discount_market": null,
+    "managers_profit": 0
+  }
+},
+{
+  "model": "apps.product",
+  "pk": 11,
+  "fields": {
+    "created_at": "2024-09-26T08:23:42.134Z",
+    "updated_at": "2024-09-26T08:23:42.134Z",
+    "name": "kaka",
+    "slug": "kaka",
+    "image": "products/2024/09/26/Unknown.png",
+    "description": "Zor",
+    "price": 25000,
+    "quantity": 12,
+    "category": 1,
+    "payment_referral": 6555,
+    "discount_market": null,
+    "managers_profit": 0
+  }
+},
+{
+  "model": "apps.product",
+  "pk": 13,
+  "fields": {
+    "created_at": "2024-09-26T08:23:42.134Z",
+    "updated_at": "2024-09-26T08:23:42.134Z",
+    "name": "joze",
+    "slug": "joze",
+    "image": "products/2024/09/26/Unknown.png",
+    "description": "Zor",
+    "price": 25000,
+    "quantity": 12,
+    "category": 1,
+    "payment_referral": 0,
+    "discount_market": null,
+    "managers_profit": 0
+  }
+},
+{
+  "model": "apps.product",
+  "pk": 15,
+  "fields": {
+    "created_at": "2024-10-05T15:52:12.723Z",
+    "updated_at": "2024-10-20T15:37:55.183Z",
+    "name": "Honor X9b",
+    "slug": "honor-x9b-1",
+    "image": "products/2024/10/20/BackgroundEraser_20240822_144425197_SDPDwwZ.png",
+    "description": "fkmc;eld",
+    "price": 22222,
+    "quantity": 100,
+    "category": 1,
+    "payment_referral": 1000,
+    "discount_market": "daxshat kuuu",
+    "managers_profit": 0
+  }
+}
+]

@@ -1,0 +1,11 @@
+[
+{
+  "model": "apps.sitedeliveryprices",
+  "pk": 1,
+  "fields": {
+    "price_for_all_regions": 30000,
+    "price_for_tashkent_region": 20000,
+    "price_for_inside_of_tashkent": 15000
+  }
+}
+]
