@@ -9,6 +9,7 @@ from apps.models import Category, Product, Region, District, Concurs, Order, Str
 @register(Product)
 class ProductModelAdmin(ModelAdmin):
     list_display = ['name', 'quantity', 'price', 'display_image', 'payment_referral']
+    search_fields = ['name', 'description']
     readonly_fields = ["display_image"]
 
     def display_image(self, obj):
@@ -58,6 +59,17 @@ class ConcursModelAdmin(ModelAdmin):
 @register(Order)
 class ConcursModelAdmin(ModelAdmin):
     list_display = 'product', 'quantity', 'full_name', 'stream', 'status', 'courier'
+    search_fields = (
+        'product__name',
+        'full_name',
+        'status',
+        'stream__name',
+        'courier__phone',
+    )
+
+    def get_search_results(self, request, queryset, search_term):
+        queryset, use_distinct = super().get_search_results(request, queryset, search_term)
+        return queryset, use_distinct
 
 
 @register(District)
