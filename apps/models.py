@@ -1,7 +1,7 @@
 from django.contrib.auth.models import AbstractUser
 from django.db.models import TextChoices, CharField, TextField, ImageField, ForeignKey, CASCADE, Model, SlugField, \
     PositiveSmallIntegerField, DateTimeField, SET_NULL, PositiveIntegerField, DateField, BooleanField, Manager, \
-    IntegerField
+    PositiveBigIntegerField
 from django.utils.text import slugify
 
 from managers import CustomUserManager
@@ -108,7 +108,7 @@ class Category(SlugBaseModel):
 class Product(SlugBaseModel, BaseModel):
     image = ImageField(upload_to='products/%Y/%m/%d', verbose_name="Mahsulot Rasmi")
     description = CharField(max_length=255, verbose_name="Mahsulot haqida")
-    price = IntegerField(verbose_name="Mahsulot narxi")
+    price = PositiveBigIntegerField(verbose_name="Mahsulot narxi")
     quantity = PositiveSmallIntegerField(verbose_name="Mahsulot Soni")
     category = ForeignKey('apps.Category', on_delete=CASCADE, related_name='products',
                           verbose_name="Mahsulot Kategoriyasi")
