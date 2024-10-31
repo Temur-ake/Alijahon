@@ -107,7 +107,7 @@ class Category(SlugBaseModel):
 class Product(SlugBaseModel, BaseModel):
     image = ImageField(upload_to='products/%Y/%m/%d', verbose_name="Mahsulot Rasmi")
     description = CharField(max_length=255, verbose_name="Mahsulot haqida")
-    price = PositiveSmallIntegerField(verbose_name="Mahsulot narxi")
+    price = PositiveIntegerField(verbose_name="Mahsulot narxi")
     quantity = PositiveSmallIntegerField(verbose_name="Mahsulot Soni")
     category = ForeignKey('apps.Category', on_delete=CASCADE, related_name='products',
                           verbose_name="Mahsulot Kategoriyasi")
