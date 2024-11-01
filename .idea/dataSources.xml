@@ -8,5 +8,12 @@
       <jdbc-url>jdbc:postgresql://localhost:5441/1000_xil_db</jdbc-url>
       <working-dir>$ProjectFileDir$</working-dir>
     </data-source>
+    <data-source source="LOCAL" name="1000_xil_db@159.65.140.144" uuid="18fbe2f5-e056-41ad-91fb-c07a390b5b85">
+      <driver-ref>postgresql</driver-ref>
+      <synchronize>true</synchronize>
+      <jdbc-driver>org.postgresql.Driver</jdbc-driver>
+      <jdbc-url>jdbc:postgresql://159.65.140.144:5441/1000_xil_db</jdbc-url>
+      <working-dir>$ProjectFileDir$</working-dir>
+    </data-source>
   </component>
 </project>

@@ -168,25 +168,44 @@ class Order(BaseModel):
             order_price = self.product.price
         return order_price
 
-    def save(self, *args, **kwargs):
-        # if self.pk:
-        original_order = self
-        if original_order.status and self.status == Order.Type.YETKAZIB_BERILDI:
-            if original_order.stream is not None:
-                total_discount = self.stream.discount * int(self.quantity)
+    def save(self, *args, force_insert=False, force_update=False, using=None, update_fields=None):
 
-                current_balance = self.stream.owner.balance or 0
-                self.stream.owner.balance = current_balance + total_discount
+        if self.status == Order.Type.YETKAZIB_BERILDI:
+            if self.stream:
+                total_discount = self.stream.discount * self.quantity
+                self.stream.owner.balance += total_discount
                 self.stream.owner.save()
 
             if self.product.managers_profit:
-                total_profit = self.product.managers_profit * int(self.quantity)
-                managers = User.objects.filter(type='manager')
-                for manager in managers:
-                    manager.balance += total_profit
-                    manager.save()
+                total_profit = self.product.managers_profit * self.quantity
+                managers = User.objects.filter(type='manager').first()
+                managers.balance += total_profit
+                managers.save()
 
-        super().save(*args, **kwargs)
+        super().save(*args, force_insert=force_insert, force_update=force_update, using=using,
+                     update_fields=update_fields)
+
+    # def save(self, *args, **kwargs):
+    #     # if self.pk:
+    #     original_order = self
+    #     if original_order.status and self.status == Order.Type.YETKAZIB_BERILDI:
+    #         if original_order.stream:
+    #             total_discount = self.stream.discount * int(self.quantity)
+    #
+    #             current_balance = self.stream.owner.balance or 0
+    #             self.stream.owner.balance = current_balance + total_discount
+    #             self.stream.owner.save()
+    #
+    #         if self.product.managers_profit:
+    #             total_profit = self.product.managers_profit * int(self.quantity)
+    #             managers = User.objects.filter(type='manager')
+    #             for manager in managers:
+    #                 manager.balance += total_profit
+    #                 manager.save()
+    #
+    #     super().save(*args, **kwargs)
+
+
 
     # def save1(self, *args, **kwargs):
     #     if self.pk:
