@@ -1,6 +1,86 @@
 {% extends 'apps/base.html' %}
+{% load static %}
 
 {% block base %}
+    <style>
+        .card-body {
+            padding: 1rem;
+        }
+
+        .table {
+            font-size: 1.1rem; 
+        }
+
+        @media (max-width: 768px) {
+            .table {
+                font-size: 0.8rem; 
+            }
+
+            {#.table thead {#}
+            {#    display: none; /* Hide header for mobile view */#}
+            {#}#}
+
+            .table, .table tbody, .table tr, .table td {
+                display: block;
+                width: 100%;
+                margin-bottom: 1rem;
+                border: 1px solid #ddd;
+                border-radius: 0.5rem;
+            }
+
+            .table td {
+                text-align: right; /* Align text to the right */
+                padding-left: 50%;
+                position: relative;
+            }
+
+            .table td::before {
+                position: absolute;
+                left: 0;
+                width: 50%;
+                padding-left: 1rem;
+                font-weight: bold;
+                {#white-space: nowrap;#}
+            }
+
+            .table td:nth-of-type(1)::before {
+                content: "#";
+            }
+
+            .table td:nth-of-type(2)::before {
+                content: "Buyurtma beruvchi";
+            }
+
+            .table td:nth-of-type(3)::before {
+                content: "Mahsulot";
+            }
+
+            .table td:nth-of-type(4)::before {
+                content: "Oqim";
+            }
+
+            .table td:nth-of-type(5)::before {
+                content: "Buyurtmachi";
+            }
+
+            .table td:nth-of-type(6)::before {
+                content: "Viloyat";
+            }
+
+            .table td:nth-of-type(7)::before {
+                content: "Holat";
+            }
+
+            .table td:nth-of-type(8)::before {
+                content: "Buyurtmachi Nomeri";
+            }
+
+            .table td:nth-of-type(9)::before {
+                content: "Sana";
+            }
+        }
+    </style>
+
     <div class="card-body d-flex justify-content-between">
         <div>
             <a class="btn btn-falcon-default btn-sm" href="/admin_page" data-bs-toggle="tooltip"
@@ -37,7 +117,7 @@
                         {% for order in orders %}
                             <tr>
                                 <td>{{ forloop.counter }}</td>
-                                <td>{{ order.owner.first_name}}</td>
+                                <td>{{ order.owner.first_name }}</td>
                                 <td>{{ order.product.name }}</td>
                                 <td>{{ order.stream.name }}</td>
                                 <td>{{ order.full_name }}</td>

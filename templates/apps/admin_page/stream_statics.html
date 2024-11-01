@@ -3,8 +3,33 @@
     .bg-info1 {
         background-color: midnightblue;
         color: red;
+        padding: 15px; /* Add padding for better spacing */
+        border-radius: 5px; /* Optional: Add rounded corners */
+        transition: background-color 0.3s, color 0.3s; /* Smooth transition */
+    }
+
+    /* Responsive adjustments */
+    @media (max-width: 1200px) {
+        .bg-info1 {
+            padding: 12px; /* Adjust padding for medium screens */
+        }
+    }
+
+    @media (max-width: 768px) {
+        .bg-info1 {
+            padding: 10px; /* Further adjust padding for smaller screens */
+            font-size: 0.9rem; /* Slightly smaller font size */
+        }
+    }
+
+    @media (max-width: 480px) {
+        .bg-info1 {
+            padding: 8px; /* Minimal padding for very small screens */
+            font-size: 0.8rem; /* Smaller font size for mobile */
+        }
     }
 </style>
+
 
 {% block base %}
     <div class="card mb-3">

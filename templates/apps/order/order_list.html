@@ -2,27 +2,50 @@
 {% load static %}
 
 {% block base %}
+    <style>
+        .content_cart {
+            padding: 10px 0;
+        }
+
+        .product-card {
+            background-color: #f8f9fa; /* Light background for better visibility */
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            padding: 15px;
+            transition: transform 0.2s;
+        }
+
+        .product-card:hover {
+            transform: scale(1.05); /* Scale effect on hover */
+        }
+
+        @media (max-width: 768px) {
+            .product-card {
+                margin-bottom: 15px; /* Space between cards on smaller screens */
+            }
+        }
+    </style>
+
     <div class="card mb-3">
         <div class="card-body">
-            <div class="container" style="padding-top: 10px;">
+            <div class="container">
                 <div class="content_cart">
-
                     <div class="content_single-product-nouser">
                         <div class="row">
                             {% for order in orders %}
                                 {% if order.status != order.Type.BEKOR_QILINDI and order.status != order.Type.YETKAZIB_BERILDI %}
-
-                                    <div class="col-md-4 p-5">
-                                        <h3>Mahsulot: {{ order.product.name }}</h3>  <!-- Access product name -->
-                                        <small>Mahsulot narxi: {{ order.price }}</small>
-                                        <!-- Access product price -->
-                                        <p>Soni: {{ order.quantity }}</p>
+                                    <div class="col-md-4 col-sm-6 col-12 p-3">
+                                        <div class="product-card">
+                                            <h3 style="color: black">Mahsulot: {{ order.product.name }}</h3>
+                                            <small style="color: black">Mahsulot narxi: {{ order.price }} so'm</small>
+                                            <p style="color: black">Soni: {{ order.quantity }}</p>
+{#                                            <p>Mahsulot narxi: {{ order.price }} so'm</p>#}
+                                        </div>
                                     </div>
                                 {% endif %}
                             {% endfor %}
                         </div>
                     </div>
-
                 </div>
             </div>
         </div>

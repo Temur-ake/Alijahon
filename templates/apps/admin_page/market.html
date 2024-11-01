@@ -12,15 +12,44 @@
         .header_menu .btn-default {
             border: 1px solid #ddd;
             border-radius: 20px;
-            padding: 10px;
-            font-size: 15px;
+            padding: 10px 15px; /* Add horizontal padding */
+            font-size: 1rem; /* Use relative units */
+            transition: background-color 0.3s, color 0.3s; /* Smooth transition */
         }
 
-        .header_menu .btn-default.active, .header_menu .btn-default:hover {
+        .header_menu .btn-default.active,
+        .header_menu .btn-default:hover {
             background-color: #5e6e82;
             color: white;
         }
+
+        /* Responsive adjustments */
+        @media (max-width: 1200px) {
+            .header_menu .btn-default {
+                font-size: 0.9rem; /* Slightly smaller font on medium screens */
+                padding: 8px 12px; /* Adjust padding */
+            }
+        }
+
+        @media (max-width: 768px) {
+            .header_menu {
+                padding: 8px; /* Reduce padding for smaller screens */
+            }
+
+            .header_menu .btn-default {
+                font-size: 0.85rem; /* Smaller font size for mobile */
+                padding: 7px 10px; /* Further reduce padding */
+            }
+        }
+
+        @media (max-width: 480px) {
+            .header_menu .btn-default {
+                font-size: 0.75rem; /* Smallest font size for very small screens */
+                padding: 5px 8px; /* Minimal padding */
+            }
+        }
     </style>
+
 
     <div class="card mb-3">
         <div class="card-body">
@@ -71,7 +100,7 @@
                             <a href="{% url 'market_page' %}"
                                class="btn btn-default {{ request.path|is_current_category }}">
                                 Hammasi </a>
-{#                            <a href="/admin_page/market/?category=top" class="btn btn-default"> Top tovarlar </a>#}
+                            {#                            <a href="/admin_page/market/?category=top" class="btn btn-default"> Top tovarlar </a>#}
                             {% for category in categories %}
                                 <a href="?category={{ category.slug }}"
                                    class="btn btn-default"> {{ category.name }} </a>
@@ -119,17 +148,19 @@
                                     <li class="list-group-item">Zaxirada: <strong> {{ product.quantity }} ta </strong>
                                     </li>
 
-                                    <li class="list-group-item">Chegirma: <strong> {{ product.discount_market|default:"yo'q" }} </strong>
+                                    <li class="list-group-item">Chegirma:
+                                        <strong> {{ product.discount_market|default:"yo'q" }} </strong>
                                     </li>
 
                                 </ul>
 
 
-                                <a href="https://t.me/onlinebozor1000xil/{{ product.id }}"
-                                   class="btn  text-white mt-2" style="background-color: red">Reklama
-                                    Posti</a>
+                                <a href="https://t.me/onlinebozor1000xil/"
+                                   class="btn  text-white mt-2" style="background-color: red">Telegram
+                                    Postlar</a>
                                 <button class="btn btn-primary btn_open_modal" type="button" data-bs-toggle="modal"
-                                        data-bs-target="#exampleModal" style="background-color: midnightblue" name="{{ product.id }}">
+                                        data-bs-target="#exampleModal" style="background-color: midnightblue"
+                                        name="{{ product.id }}">
                                     Oqim yaratish
                                 </button>
                                 <a href="{% url 'product_statistics' product.pk %}"

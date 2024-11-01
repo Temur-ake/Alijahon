@@ -98,7 +98,7 @@ class CreateOrderForm(ModelForm):
 
     class Meta:
         model = Order
-        exclude = 'quantity', 'status', 'region', 'district'
+        exclude = 'quantity', 'status', 'region', 'district','courier',
 
     def clean_phone(self):
         phone = self.data.get('phone')

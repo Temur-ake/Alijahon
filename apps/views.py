@@ -135,16 +135,29 @@ class ProductListView(ListView):
         return context
 
 
-class ProductDetailView(DetailView, CreateView):
+class ProductDetailView(DetailView):
     model = Product
-    form_class = CreateOrderForm
     template_name = 'apps/shop/product-detail.html'
     context_object_name = 'product'
+    # success_url = reverse_lazy('order_list')
+
+    # def form_valid(self, form):
+    #     form.instance.owner = self.request.user
+    #     if len(form.cleaned_data['phone']) != 12:
+    #         raise ValidationError('number must be 12 in length')
+    #     order = form.save()
+    #     return redirect('order_detail', pk=order.pk)
+
+
+class OrderCreateView(CreateView):
+    model = Order
+    form_class = CreateOrderForm
+    # success_url = reverse_lazy('order_detail')
+
+    def form_invalid(self, form):
+        return super().form_invalid(form)
 
     def form_valid(self, form):
-        form.instance.owner = self.request.user
-        if len(form.cleaned_data['phone']) != 12:
-            raise ValidationError('number must be 12 in length')
         order = form.save()
         return redirect('order_detail', pk=order.pk)
 
@@ -155,7 +168,7 @@ class OrderListView(LoginRequiredMixin, ListView):
     context_object_name = 'orders'
 
     def get_queryset(self):
-        qs = super().get_queryset().filter(phone=self.request.user.phone)
+        qs = super().get_queryset().order_by('-created_at')
         return qs
 
 

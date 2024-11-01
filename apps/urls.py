@@ -11,7 +11,7 @@ from apps.views import (
     StreamCreateView, StreamDetailView, StatisticProductDetailView, AdminPageTemplateView,
     RequestListView, ConcursListView, StreamStatisticsListView,
     TransactionCreateView, TransactionListView, OperatorListView, OperatorCreateView, OperatorDetailView,
-    DeleteOrderView,
+    DeleteOrderView, OrderCreateView,
 )
 
 urlpatterns = [
@@ -20,6 +20,7 @@ urlpatterns = [
     path('category/', ProductListView.as_view(), name='all_category'),
     path('category/<slug:slug>/', ProductListView.as_view(), name='category_products'),
     path('product-detail/<slug:slug>/', ProductDetailView.as_view(), name='product_detail'),
+    path('order-create/', OrderCreateView.as_view(), name='create_order'),
     path('success-product/<int:pk>/', OrderDetailView.as_view(), name='order_detail'),
     path('ordered-products/', OrderListView.as_view(), name='order_list'),
 

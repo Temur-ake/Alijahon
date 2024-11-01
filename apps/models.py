@@ -158,7 +158,7 @@ class Order(BaseModel):
     stream = ForeignKey(Stream, SET_NULL, null=True, blank=True, related_name='orders',
                         verbose_name="Buyurtmaning oqimi")
     courier = ForeignKey(User, SET_NULL, related_name='couriers', null=True, blank=True,
-                         verbose_name="Mahsulot Yetkazib Beruvchi", default=User.Type.DRIVER)
+                         verbose_name="Mahsulot Yetkazib Beruvchi")
 
     @property
     def price(self):

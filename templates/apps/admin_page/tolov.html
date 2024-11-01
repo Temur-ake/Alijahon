@@ -1,6 +1,70 @@
 {% extends 'apps/base.html' %}
+{% load static %}
 
 {% block base %}
+    <style>
+        .card {
+            border-radius: 0.5rem;
+        }
+
+        @media (max-width: 768px) {
+            .card-body {
+                padding: 1rem;
+            }
+
+            .table {
+                font-size: 0.9rem; /* Smaller text for smaller screens */
+            }
+
+            .table thead {
+                display: none; /* Hide the header for mobile */
+            }
+
+            .table, .table tbody, .table tr, .table td {
+                display: block;
+                width: 100%;
+                margin-bottom: 1rem;
+                border: 1px solid #ddd;
+                border-radius: 0.5rem;
+            }
+
+            .table td {
+                text-align: right;
+                padding-left: 50%;
+                position: relative;
+            }
+
+            .table td::before {
+                position: absolute;
+                left: 0;
+                width: 50%;
+                padding-left: 1rem;
+                font-weight: bold;
+                white-space: nowrap;
+            }
+
+            .table td:nth-of-type(1)::before {
+                content: "Sana";
+            }
+
+            .table td:nth-of-type(2)::before {
+                content: "Hisob raqam";
+            }
+
+            .table td:nth-of-type(3)::before {
+                content: "Summa";
+            }
+
+            .table td:nth-of-type(4)::before {
+                content: "Holat";
+            }
+
+            .table td:nth-of-type(5)::before {
+                content: "Xabar";
+            }
+        }
+    </style>
+
     <div class="card mb-3">
         <div class="card-body">
             <div class="container">
@@ -9,7 +73,7 @@
                     <div class="col-sm-6 p-4">
                         <div class="card">
                             <div class="card-header">
-                                <h5>Mening hisobim :</h5>
+                                <h5>Mening hisobim:</h5>
                             </div>
                             <div class="card-body">
                                 <h5 class="card-title">Asosiy balansda: <span
@@ -23,45 +87,41 @@
                         {% endfor %}
                     </div>
 
-
                     <div class="col-sm-6 p-4">
                         <div class="card">
                             <div class="card-header">
-                                <h5>To'lovga so'rov berish formasi :  <br>
-                                    <br>
-                                    <p>Foydalanuvchi o'z kartasi va pul miqdorini kiritib Adminga so'rov yuboradi. Admin uni 2 kun ichida ko'rib chiqib foydalanuvchi kartasiga tashlab beradi. 
-                                    </p>
-                                    <br>
-                                    
-                                    Minimal kiritiladigan summa 100 000 so'm !</h5>
+                                <h5>To'lovga so'rov berish formasi:</h5>
                             </div>
-                            <form action="{% url 'tolov_create_page' %}" method="post">
-                                {% csrf_token %}
-                                <div class="form-group">
-                                    <label for="id_card_number"><h6>Karta raqam</h6></label>
-                                    <input type="text" name="card_number" id="id_card_number" class="form-control"
-                                           placeholder="Karta raqamini kiriting" maxlength="16" required>
-                                    
+                            <div class="card-body">
+                                <p style="color: red">Foydalanuvchi o'z kartasi va pul miqdorini kiritib Adminga
+                                    so'rov yuboradi. Admin uni
+                                    2 kun ichida ko'rib chiqib foydalanuvchi kartasiga tashlab beradi.</p>
+                                <p>Minimal kiritiladigan summa 100 000 so'm!</p>
 
-                                </div>
+                                <form action="{% url 'tolov_create_page' %}" method="post">
+                                    {% csrf_token %}
+                                    <div class="form-group">
+                                        <label for="id_card_number"><h6>Karta raqam</h6></label>
+                                        <input type="text" name="card_number" id="id_card_number" class="form-control"
+                                               placeholder="Karta raqamini kiriting" maxlength="16" required>
+                                    </div>
 
-                                <div class="form-group">
-                                    <label for="id_amount"><h6>Miqdor</h6></label>
-                                    <input type="number" name="amount" id="id_amount" class="form-control"
-                                           placeholder="Miqdorini kiriting" required>
+                                    <div class="form-group">
+                                        <label for="id_amount"><h6>Miqdor</h6></label>
+                                        <input type="number" name="amount" id="id_amount" class="form-control"
+                                               placeholder="Miqdorini kiriting" required>
+                                    </div>
 
-                                </div>
+                                    {% if transactions %}
+                                        <input type="hidden" name="status" value="{{ transactions.0.status }}">
+                                    {% else %}
+                                        <input type="hidden" name="status" value="pending">
+                                    {% endif %}
 
-                                <!-- Set the status based on transactions or default to 'pending' -->
-                                {% if transactions %}
-                                    <input type="hidden" name="status" value="{{ transactions.0.status }}">
-                                {% else %}
-                                    <input type="hidden" name="status" value="pending">
-                                {% endif %}
-
-                                <input type="submit" value="Tasdiqlash" class="btn btn-primary" style="background-color: midnightblue">
-                            </form>
-
+                                    <input type="submit" value="Tasdiqlash" class="btn btn-primary"
+                                           style="background-color: midnightblue">
+                                </form>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -82,19 +142,17 @@
                         <tbody>
                         {% for transaction in transactions %}
                             <tr>
-                                <td>{{ transaction.created_at }}</td>
-                                <td>{{ transaction.card_number }}</td>
+                                <td>{{ transaction.created_at|date:"Y-m-d H:i" }}</td>
+                                <td>{{ transaction.card_number|slice:":4" }}****{{ transaction.card_number|slice:"-4:" }}</td>
                                 <td>{{ transaction.amount }}</td>
                                 <td>{{ transaction.get_status_display }}</td>
-
                                 <td>
                                     {% if transaction.message %}
                                         {{ transaction.message|default:"--" }}
                                     {% elif transaction.image %}
                                         <a href="{{ transaction.image.url }}"
-                                           style="color:white; background-color: midnightblue" target="_blank"
-                                           class="btn btn-info">See
-                                            the image</a>
+                                           style="color:white;width: 90px; height: 40px;background-color: midnightblue" target="_blank"
+                                           class="btn btn-info">Rasm</a>
                                     {% else %}
                                         --
                                     {% endif %}

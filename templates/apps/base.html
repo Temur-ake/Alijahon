@@ -7,19 +7,28 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <style>
+        /* Base styles */
         .header_menu {
             padding: 12px;
+            display: flex;
+            justify-content: center; /* Centering buttons */
+            flex-wrap: wrap; /* Allow buttons to wrap on smaller screens */
         }
 
         .main {
             background-color: midnightblue;
+            padding: 20px; /* Added padding for better spacing */
+            color: white; /* Ensuring text is visible on dark background */
         }
 
         .header_menu .btn-default {
             border: 1px solid #ddd;
             border-radius: 20px;
-            padding: 10px;
+            padding: 10px 15px; /* Added horizontal padding for better touch targets */
             font-size: 15px;
+            margin: 5px; /* Added margin for spacing between buttons */
+            flex: 1 1 auto; /* Allow buttons to grow and shrink */
+            min-width: 120px; /* Minimum width for buttons */
         }
 
         .header_menu .btn-default.active,
@@ -28,16 +37,56 @@
             color: #fff;
         }
 
+        /* Responsive styles */
+        @media (max-width: 768px) {
+            .header_menu {
+                flex-direction: column; /* Stack buttons vertically on small screens */
+                align-items: center; /* Center buttons */
+            }
 
+            .header_menu .btn-default {
+                width: 100%; /* Make buttons full-width on small screens */
+                max-width: 300px; /* Limit max width to avoid too wide buttons */
+            }
+        }
+
+        @media (max-width: 480px) {
+            .header_menu .btn-default {
+                font-size: 14px; /* Slightly smaller font on very small screens */
+                padding: 8px; /* Adjust padding for touch targets */
+            }
+        }
+
+        .navbar-brand {
+            display: flex;
+            align-items: center; /* Align items vertically in the center */
+            text-decoration: none; /* Remove underline from link */
+        }
+
+        .navbar-brand img {
+            max-width: 100%; /* Ensure image is responsive */
+            height: auto; /* Maintain aspect ratio */
+        }
+
+        .navbar-brand .font-sans-serif {
+            color: white;
+            font-size: 1.25rem; /* Adjust font size for visibility */
+            white-space: nowrap; /* Prevent text from wrapping */
+        }
+
+        /* Responsive adjustments */
+        @media (max-width: 768px) {
+            .navbar-brand .font-sans-serif {
+                font-size: 1rem; /* Smaller font size on mobile */
+            }
+        }
     </style>
 
 
     <!-- ===============================================-->
     <!--    Document Title-->
     <!-- ===============================================-->
-    <title>
-
-    </title>
+   
 
 
     <!-- ===============================================-->
@@ -169,7 +218,7 @@
                     <div class="d-flex align-items-center py-3"><img class="me-2"
                                                                      src="{% static 'apps/assets/img/mmm.jpg' %}"
                                                                      alt="" width="40"/><span
-                            class="font-sans-serif" style="color: white">1000 xil</span>
+                            class="font-sans-serifs" style="color: white">1000 xil</span>
                     </div>
                 </a>
             </div>
@@ -345,6 +394,8 @@
 
 
 
+                                        
+                                        
                                         {% if user.image %}{{ user.image.url }}{% else %}{% static 'apps/assets/img/nouser.png' %}{% endif %}"
                                      alt="card"/>
                             </div>
