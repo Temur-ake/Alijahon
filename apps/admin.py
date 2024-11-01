@@ -80,11 +80,31 @@ class DistrictModelAdmin(ModelAdmin):
 @register(Stream)
 class StreamModelAdmin(ModelAdmin):
     list_display = 'name', 'product', 'discount', 'owner'
+    search_fields = (
+        'product__name',
+        'discount',
+        'owner__phone',
+        'name'
+    )
+
+    def get_search_results(self, request, queryset, search_term):
+        queryset, use_distinct = super().get_search_results(request, queryset, search_term)
+        return queryset, use_distinct
 
 
 @register(User)
 class UserModelAdmin(ModelAdmin):
     list_display = ['phone', 'first_name', 'last_name', 'type', 'balance', 'display_image', 'address', 'district']
+    search_fields = (
+        'first_name',
+        'last_name',
+        'phone',
+        'type'
+    )
+
+    def get_search_results(self, request, queryset, search_term):
+        queryset, use_distinct = super().get_search_results(request, queryset, search_term)
+        return queryset, use_distinct
 
     def display_image(self, obj):
         if obj.image:
@@ -103,7 +123,16 @@ class SiteDeliveryPricesModelAdmin(ModelAdmin):
 
 @register(Transaction)
 class TransactionModelAdmin(ModelAdmin):
-    list_display = 'owner', 'status', 'amount', 'display_image', 'owner__type'
+    list_display = 'owner', 'status', 'amount', 'display_image', 'owner__type', 'card_number'
+    search_fields = (
+        'owner__phone',
+        'card_number',
+        'status'
+    )
+
+    def get_search_results(self, request, queryset, search_term):
+        queryset, use_distinct = super().get_search_results(request, queryset, search_term)
+        return queryset, use_distinct
 
     def display_image(self, obj):
         if obj.image:

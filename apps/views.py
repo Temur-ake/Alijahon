@@ -357,7 +357,7 @@ class TransactionListView(ListView):
 
     def get_queryset(self):
         qs = super().get_queryset()
-        qs = qs.filter(owner=self.request.user)
+        qs = qs.filter(owner=self.request.user).order_by('-created_at')
         return qs
 
     def get_context_data(self, *, object_list=None, **kwargs):

@@ -169,22 +169,22 @@ class Order(BaseModel):
         return order_price
 
     def save(self, *args, **kwargs):
-        if self.pk:  # Check if updating
-            original_order = Order.objects.get(pk=self.pk)
-            if original_order.status != self.status and self.status == Order.Type.YETKAZIB_BERILDI:
-                if original_order.stream is not None:
-                    total_discount = self.stream.discount * int(self.quantity)
+        # if self.pk:
+        original_order = self
+        if original_order.status and self.status == Order.Type.YETKAZIB_BERILDI:
+            if original_order.stream is not None:
+                total_discount = self.stream.discount * int(self.quantity)
 
-                    current_balance = self.stream.owner.balance or 0
-                    self.stream.owner.balance = current_balance + total_discount
-                    self.stream.owner.save()
+                current_balance = self.stream.owner.balance or 0
+                self.stream.owner.balance = current_balance + total_discount
+                self.stream.owner.save()
 
-                if self.product.managers_profit:
-                    total_profit = self.product.managers_profit * int(self.quantity)
-                    managers = User.objects.filter(type='manager')
-                    for manager in managers:
-                        manager.balance += total_profit
-                        manager.save()
+            if self.product.managers_profit:
+                total_profit = self.product.managers_profit * int(self.quantity)
+                managers = User.objects.filter(type='manager')
+                for manager in managers:
+                    manager.balance += total_profit
+                    manager.save()
 
         super().save(*args, **kwargs)
 
