@@ -240,6 +240,7 @@ class StreamListview(ListView):
     def get_queryset(self):
         qs = super().get_queryset()
         qs = qs.filter(owner=self.request.user)
+        qs = qs.order_by('-created_at')
         return qs
 
 
