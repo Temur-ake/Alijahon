@@ -2,6 +2,36 @@
 {% load static %}
 
 {% block base %}
+    <style>
+        .content_auth_form {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh; /* Full height */
+            padding: 20px; /* Add some padding */
+        }
+
+        .card {
+            border-radius: 0.5rem;
+            width: 130%;
+            max-width: 500px; /* Limit the width */
+        }
+
+        .form-control {
+            border-radius: 0.5rem;
+        }
+
+        @media (max-width: 576px) {
+            .content_auth_form {
+                padding: 10px; /* Less padding on small screens */
+            }
+
+            .card {
+                width: 100%; /* Full width on small screens */
+            }
+        }
+    </style>
+
     <div class="content_auth_form">
         <div class="content_auth_form_group">
             <div class="content_auth_form_group_input">
@@ -10,7 +40,7 @@
                         {% csrf_token %}
                         <div class="card-header bg-circle-shape bg-shape text-center p-2">
                             <a class="font-sans-serif fw-bolder fs-4 z-index-1 position-relative link-light light"
-                               href="{% url 'all_products' %}"><img  style="width: 40px;" src="{% static 'apps/assets/img/mmm.jpg' %}"> 1000 xil</a>
+                               href="{% url 'all_products' %}"><img style="width: 40px;" src="{% static 'apps/assets/img/mmm.jpg' %}"> 1000 xil</a>
                         </div>
                         <div class="card-body p-4">
                             <div class="row flex-between-center">
@@ -20,14 +50,14 @@
                             </div>
                             <div class="mb-3">
                                 <label class="form-label" for="phone">Telefon raqami</label>
-                                <input type="text" name="phone" id="phone" class="form-control">
+                                <input type="text" name="phone" id="phone" class="form-control" required>
                             </div>
                             <div class="mb-3">
                                 <label class="form-label" for="password">Parol</label>
-                                <input class="form-control" name="password" id="password" type="password">
+                                <input class="form-control" name="password" id="password" type="password" required>
                             </div>
                             <div class="mb-3">
-                                <button class="btn btn-primary d-block w-100 mt-3" type="submit" name="submit">
+                                <button class="btn btn-primary d-block w-100 mt-3" style="background-color: midnightblue" type="submit" name="submit">
                                     Kirish
                                 </button>
                             </div>

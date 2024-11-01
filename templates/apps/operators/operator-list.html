@@ -150,13 +150,31 @@
             margin-bottom: 20px; /* Space below search */
             text-align: right; /* Align to right */
         }
+
+        @media (max-width: 768px) {
+            .sidebar {
+                width: 100%;
+                height: auto;
+                position: relative; /* Make sidebar relative on small screens */
+            }
+
+            .main-content {
+                margin-left: 0; /* Remove left margin */
+                padding: 10px; /* Adjust padding */
+            }
+
+            .navbar {
+                flex-direction: column; /* Stack navbar items on small screens */
+                align-items: flex-start; /* Align to start */
+            }
+        }
     </style>
 </head>
 
 <body>
 <nav class="navbar">
     <div>Buyurtmalar</div>
-    <h4 class="btn-danger btn-sm" style="color:white;"><B>OPERATORLAR QISMI</B></h4>
+    <h4 class="btn-danger btn-sm" style="color:white;"><b>OPERATORLAR QISMI</b></h4>
     <a href="/admin_page" class="btn btn-danger btn-sm" style="color:white;">Admin Page</a>
 </nav>
 
@@ -213,7 +231,7 @@
 
             <div class="form-group">
                 <label for="id_quantity">Buyurtma soni (1 yoki 2):</label>
-                <input type="number" name="quantity" id="id_quantity" class="form-control"  required>
+                <input type="number" name="quantity" id="id_quantity" class="form-control" required>
             </div>
 
             <div class="form-group">
@@ -300,7 +318,6 @@
             <input class="btn btn-primary" type="submit" value="Buyurtma Yaratish">
         </form>
 
-
         <h5 class="section-title mt-5">Buyurtmalar</h5>
 
         <!-- Search Form -->
@@ -317,12 +334,12 @@
                 <table class="table table-bordered table-hover">
                     <thead>
                     <tr>
-                        <th>Mahsulot</th>
-                        <th>Mahsulot soni</th>
-                        <th>Qabul qiluvchi</th>
+                        <th>Mahsulot Nomi</th>
+                        <th>Mahsulot Soni</th>
+                        <th>Qabul Qiluvchi</th>
                         <th>Oqim</th>
-                        <th>Holat</th>
-                        <th>Actions</th>
+                        <th>Holati</th>
+                        <th>Amallar</th>
                     </tr>
                     </thead>
                     <tbody>
@@ -331,10 +348,10 @@
                             <td>{{ order.product.name }}</td>
                             <td>{{ order.quantity }}</td>
                             <td>{{ order.full_name }}</td>
-                            <td>{{ order.stream|default:0 }}</td>
-                            <td>{{ order.status }}</td>
+                            <td>{{ order.stream|default:'- (yo\'q)' }}</td>
+                                    <td>{{ order.status }}</td>
                             <td>
-                                <a href="{% url 'operator_detail' order.id %}">Detail</a>
+                                <a href="{% url 'operator_detail' order.id %}">Batafsil</a>
                             </td>
                         </tr>
                     {% endfor %}
