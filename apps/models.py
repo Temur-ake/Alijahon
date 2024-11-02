@@ -2,6 +2,7 @@ from django.contrib.auth.models import AbstractUser
 from django.db.models import TextChoices, CharField, TextField, ImageField, ForeignKey, CASCADE, Model, SlugField, \
     PositiveSmallIntegerField, DateTimeField, SET_NULL, PositiveIntegerField, DateField, BooleanField, Manager
 from django.utils.text import slugify
+from django_ckeditor_5.fields import CKEditor5Field
 
 from managers import CustomUserManager
 
@@ -106,7 +107,7 @@ class Category(SlugBaseModel):
 
 class Product(SlugBaseModel, BaseModel):
     image = ImageField(upload_to='products/%Y/%m/%d', verbose_name="Mahsulot Rasmi")
-    description = CharField(max_length=255, verbose_name="Mahsulot haqida")
+    description = CKEditor5Field(verbose_name="Mahsulot haqida")
     price = PositiveIntegerField(verbose_name="Mahsulot narxi")
     quantity = PositiveSmallIntegerField(verbose_name="Mahsulot Soni")
     category = ForeignKey('apps.Category', on_delete=CASCADE, related_name='products',
@@ -204,8 +205,6 @@ class Order(BaseModel):
     #                 manager.save()
     #
     #     super().save(*args, **kwargs)
-
-
 
     # def save1(self, *args, **kwargs):
     #     if self.pk:

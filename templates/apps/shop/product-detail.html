@@ -1,5 +1,12 @@
 {% extends 'apps/base.html' %}
 {% load custom_tags %}
+
+<style>
+    .product-description {
+        color: black !important; /* Force black color */
+    }
+</style>
+
 {% block base %}
     <div class="card mb-3 mt-2">
         <div class="card-body">
@@ -10,6 +17,7 @@
                     {% if 'stream' in request.path %}
                         <input type="hidden" name="stream" value="{{ stream.pk }}">
                     {% endif %}
+
                     <div class="mb-2">
                         <label class="form-label" for="formGroupNameInput">Ism:</label>
                         <input class="form-control" name="full_name" id="formGroupNameInput" type="text" required/>
@@ -38,8 +46,8 @@
             </div>
 
             <div class="col-lg-8 swiper-container mt-4">
-                <h5>{{ product.name }}</h5>
-                <p class="fs--1" style="color: black">{{ product.description }}</p>
+                <h3>{{ product.name }}</h3>
+                <h5 class="fs product-description" style="margin: 0;">{{ product.description|safe }}</h5>
                 <h4 class="d-flex align-items-center">
                     <span class="text-warning me-2">
                         {% if 'stream' in request.path %}
