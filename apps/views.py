@@ -152,6 +152,7 @@ class ProductDetailView(DetailView):
 class OrderCreateView(CreateView):
     model = Order
     form_class = CreateOrderForm
+
     # success_url = reverse_lazy('order_detail')
 
     def form_invalid(self, form):
@@ -291,15 +292,12 @@ class StreamStatisticsListView(ListView):
 
         if period == 'today':
             qs = qs.filter(orders__created_at__date=now.date())
-
         elif period == 'last_day':
             start_date = now - timedelta(days=1)
             qs = qs.filter(orders__created_at__range=(start_date, now))
-
         elif period == 'weekly':
             start_date = now - timedelta(weeks=1)
             qs = qs.filter(orders__created_at__range=(start_date, now))
-
         elif period == 'monthly':
             start_date = now - timedelta(days=30)
             qs = qs.filter(orders__created_at__range=(start_date, now))
@@ -313,7 +311,9 @@ class StreamStatisticsListView(ListView):
             bekor_qilindi=Count('orders', Q(orders__status='bekor_qilindi')),
             arxivlandi=Count('orders', Q(orders__status='arxivlandi')),
         )
-        qs.aggregates = qs.aggregate(
+
+        # Aggregate totals
+        aggregates = qs.aggregate(
             total_tashrif=Sum('tashrif'),
             total_yangi=Sum('yangi'),
             total_tayyor=Sum('tayyor'),
@@ -321,9 +321,11 @@ class StreamStatisticsListView(ListView):
             total_yetkazib_berildi=Sum('yetkazib_berildi'),
             total_telefon_kotarmadi=Sum('telefon_kotarmadi'),
             total_bekor_qilindi=Sum('bekor_qilindi'),
-            total_arxivlandi=Sum('arxivlandi')
-
+            total_arxivlandi=Sum('arxivlandi'),
         )
+
+        # Attach aggregates to the queryset
+        qs.aggregates = aggregates
 
         return qs
 
