@@ -12,11 +12,15 @@
             border: 1px solid #ddd;
             border-radius: 5px;
             padding: 15px;
-            transition: transform 0.2s;
+            transition: transform 0.3s;
+            height: 100%; /* Ensure all cards have the same height */
+            display: flex; /* Use flexbox to align content */
+            flex-direction: column; /* Stack children vertically */
+            justify-content: space-between; /* Space out children */
         }
 
         .product-card:hover {
-            transform: scale(1.05); /* Scale effect on hover */
+            transform: scale(1.07); /* Scale effect on hover */
         }
 
         @media (max-width: 768px) {
@@ -37,9 +41,9 @@
                                     <div class="col-md-4 col-sm-6 col-12 p-3">
                                         <div class="product-card">
                                             <h3 style="color: black">Mahsulot: {{ order.product.name }}</h3>
-                                            <small style="color: black">Mahsulot narxi: {{ order.price }} so'm</small>
+                                            <small style="color: black">Mahsulot narxi: {{ order.product.price }}
+                                                so'm</small>
                                             <p style="color: black">Soni: {{ order.quantity }}</p>
-{#                                            <p>Mahsulot narxi: {{ order.price }} so'm</p>#}
                                         </div>
                                     </div>
                                 {% endif %}

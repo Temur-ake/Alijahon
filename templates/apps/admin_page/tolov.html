@@ -85,6 +85,9 @@
                         {% for error in form.amount.errors %}
                             <div class="alert alert-danger">{{ error }}</div>
                         {% endfor %}
+                        {% for er in form.card_number.errors %}
+                            <div class="alert alert-danger">{{ er }}</div>
+                        {% endfor %}
                     </div>
 
                     <div class="col-sm-6 p-4">

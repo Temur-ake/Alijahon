@@ -1,4 +1,5 @@
 from datetime import timedelta
+import re
 
 from django.contrib import messages
 from django.contrib.auth import login, logout
@@ -391,13 +392,21 @@ class TransactionCreateView(CreateView):
     def form_valid(self, form):
         form.instance.owner = self.request.user
         entered_amount = form.cleaned_data['amount']
+        entered_card_number = form.cleaned_data['card_number']
+
+        def isnumber(value):
+            return bool(re.match(r'^\d+$', value))
+
+        if not isnumber(entered_card_number):
+            form.add_error('card_number', "To'g'ri Karta raqamini kiriting !")
+            return self.form_invalid(form)
 
         if entered_amount < 100000:
             form.add_error('amount', "Kiritilgan mablag' 100 000 mingdan kam bo'lmasligi kerak !")
             return self.form_invalid(form)
 
         if self.request.user.balance < entered_amount:
-            form.add_error('amount', "Mablag' yetarli emas")
+            form.add_error('amount', "Mablag' yetarli emas !")
             return self.form_invalid(form)
 
         transaction = form.save(commit=False)

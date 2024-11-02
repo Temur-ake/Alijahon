@@ -20,12 +20,12 @@
 
                     <div class="mb-2">
                         <label class="form-label" for="formGroupNameInput">Ism:</label>
-                        <input class="form-control" name="full_name" id="formGroupNameInput" type="text" required/>
+                        <input class="form-control" placeholder="Ismingizni kiriting:" name="full_name" id="formGroupNameInput" type="text" required/>
                     </div>
 
                     <div class="mb-4">
                         <label class="form-label" for="phone-mask">Telefon nomer:</label>
-                        <input class="form-control" id="phone-mask" name="phone" type="text" required/>
+                        <input class="form-control"placeholder="Telefon nomer kiriting:" id="phone-mask" name="phone" type="text" required/>
                         {% if form.phone.errors %}
                             <div class="alert alert-danger mt-2">
                                 {{ form.phone.errors }}

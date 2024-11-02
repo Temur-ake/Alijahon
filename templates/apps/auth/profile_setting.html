@@ -40,13 +40,13 @@
                     <form class="row g-3" method="post" enctype="multipart/form-data">
                         {% csrf_token %}
                         <div class="col-lg-6">
-                            Ismi
-                            <input type="text" name="first_name" value="{{ user.first_name }}" class="form-control"
+                            <h6>Ism</h6>
+                            <input type="text" placeholder="Ismingizni kiriting:" name="first_name" value="{{ user.first_name }}" class="form-control"
                                    maxlength="30" required>
                         </div>
                         <div class="col-lg-6">
-                            Familiya
-                            <input type="text" name="last_name" value="{{ user.last_name }}" class="form-control"
+                            <h6>Familiya</h6>
+                            <input type="text" name="last_name"placeholder="Familiyangizni kiriting:" value="{{ user.last_name }}" class="form-control"
                                    maxlength="40" required>
                         </div>
                         {#                        <div class="col-lg-6">#}
@@ -55,12 +55,12 @@
                         {#                                   required>#}
                         {#                        </div>#}
                         <div class="col-lg-6">
-                            Telegram ID
-                            <input type="text" name="telegram_id" value="{{ user.telegram_id }}" class="form-control"
-                                   maxlength="255" placeholder="Telegram ID" required>
+                            <h6>Telegram ID</h6>
+                            <input type="text" name="telegram_id"  value="{{ user.telegram_id }}" class="form-control"
+                                   maxlength="255" placeholder="Telegram ID ni kiriting">
                         </div>
                         <div class="col-lg-6">
-                            Viloyat
+                            <h6>Viloyat</h6>
                             <select name="region" class="form-control" id="id_region"
                                     onchange="fetchDistricts(this.value)" required>
                                 <option value="">Viloyatni tanlang</option>
@@ -71,7 +71,7 @@
                             </select>
                         </div>
                         <div class="col-lg-6">
-                            Shahar/Tuman
+                            <h6>Shahar/Tuman</h6>
                             <select name="district" class="form-control" id="id_district" required>
                                 <option value="">Tumanni tanlang</option>
                                 {% for district in districts %}
@@ -81,24 +81,24 @@
                             </select>
                         </div>
                         <div class="col-lg-6">
-                            Manzil
+                            <h6>Manzil</h6>
                             <input type="text" name="address" value="{{ user.address }}" class="form-control"
-                                   maxlength="255" placeholder="Manzil" required>
+                                   maxlength="255" placeholder="Aniq Manzilingizni kiriting:" required>
                         </div>
                         <div class="col-lg-6">
-                            Siz haqingizda
-                            <textarea name="about" class="form-control" maxlength="399"
+                            <h6>Siz haqingizda</h6>
+                            <textarea name="about" class="form-control" placeholder="O'zingiz haqida ma'lumot kiriting" maxlength="399"
                                       required>{{ user.about }}</textarea>
                         </div>
 
                         <div class="col-lg-6">
                             <br>
                             
-                            Rasm o'zgartirish
+                            <h6>Rasm o'zgartirish</h6>
                             
                             <br>
 
-                            <input type="file" name="image">
+                            <input type="file" placeholder="Raasmingizni kiriting" name="image">
 
                         </div>
                         <div class="col-12 d-flex justify-content-end">
@@ -118,18 +118,18 @@
                         <form method="post" action="{% url 'update_password' %}">
                             {% csrf_token %}
                             <div class="mb-3">
-                                <label class="form-label" for="old-password">Oldingi parol</label>
-                                <input class="form-control" id="old-password" type="password" name="password"
+                                <label class="form-label" for="old-password"><h6>Oldingi parol</h6></label>
+                                <input class="form-control" placeholder="Eski parolni kiriting" id="old-password" type="password" name="password"
                                        required>
                             </div>
                             <div class="mb-3">
-                                <label class="form-label" for="new-password">Yangi parol</label>
-                                <input class="form-control" id="new-password" type="password" name="new_password1"
+                                <label class="form-label" for="new-password"><h6>Yangi parol</h6></label>
+                                <input class="form-control" placeholder="Yangi parolni kiriting" id="new-password" type="password" name="new_password1"
                                        required>
                             </div>
                             <div class="mb-3">
-                                <label class="form-label" for="confirm-password">Yangi parolni takrorlash</label>
-                                <input class="form-control" id="confirm-password" type="password" name="new_password2"
+                                <label class="form-label" for="confirm-password"><h6>Yangi parolni takrorlash</h6></label>
+                                <input class="form-control" id="confirm-password" placeholder="Yangi parolni yana kiriting" type="password" name="new_password2"
                                        required>
                             </div>
                             <button class="btn btn-primary d-block w-100" type="submit">Parolni yangilash</button>

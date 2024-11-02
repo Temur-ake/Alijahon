@@ -1,7 +1,6 @@
 {% extends 'apps/base.html' %}
 {% load static %}
 
-
 {% block base %}
     <div class="card mt-2 mb-2">
         <div class="card-header bg-light">
@@ -9,74 +8,61 @@
                 <div class="col">
                     <h5 class="mb-0" id="followers"></h5>
                 </div>
-                <div class="col text-end"><a class="font-sans-serif" href="/category">Kategoriyalar</a>
+                <div class="col text-end">
+                    <a class="font-sans-serif" href="/category">Kategoriyalar</a>
                 </div>
             </div>
         </div>
         <div class="card-body bg-light px-1 py-0">
             <div class="row g-0 text-center fs--1">
                 {% for i in categories %}
-
-                    <div class="col-4 col-md-4 col-lg-3 col-xx1-2 mb-1">
-                        <div class="bg-white dark__bg-1100 p-1 h-100"><a
-                                href="{% url 'category_products' i.slug %}"><img
-                                class="img-thumbnail img-fluid  mb-3 shadow-sm"
-                                src="{{ i.image.url }}" alt=""
-                                width="100"></a>
-                            <h6 class="mb-1" style="color: red"><a
-                                    href="{% url 'category_products' i.slug %}">{{ i.name }}</a>
+                    <div class="col-4 col-md-4 col-lg-3 mb-1">
+                        <div class="bg-white dark__bg-1100 p-1 h-100 category-row" style="transition: transform 0.3s;">
+                            <a href="{% url 'category_products' i.slug %}">
+                                <img class="img-thumbnail img-fluid mb-3 shadow-sm category-image"
+                                     src="{{ i.image.url }}" alt="">
+                            </a>
+                            <h6 class="mb-1" style="color: red">
+                                <a href="{% url 'category_products' i.slug %}">{{ i.name }}</a>
                             </h6>
-                            <p class="fs--2 mb-1"></p>
                         </div>
                     </div>
                 {% endfor %}
-
             </div>
         </div>
     </div>
-    <div class="card mb-3">
 
+    <div class="card mb-3">
         <div class="card-body">
             <div class="row">
                 {% for i in products %}
-
-
                     <div class="col-6 mb-3 col-md-6 col-lg-4">
-                        <div class="border rounded-1 d-flex flex-column justify-content-between pb-3">
+                        <div class="border rounded-1 d-flex flex-column justify-content-between pb-3 product-row"
+                             style="transition: transform 0.3s;">
                             <div class="overflow-hidden">
                                 <div class="position-relative rounded-top overflow-hidden">
                                     <a class="d-block" href="{% url 'product_detail' i.slug %}">
-                                        <img class="img-fluid rounded-top" src="{{ i.image.url }}"
-                                             alt=""></a>
+                                        <img class="img-fluid rounded-top product-image" src="{{ i.image.url }}" alt="">
+                                    </a>
                                 </div>
                                 <div class="p-2">
                                     <h5 class="fs-0">
-                                        <a class="text-dark" href="{% url 'product_detail' i.slug %}">
-                                            {{ i.name }}
-                                        </a>
+                                        <a class="text-dark" href="{% url 'product_detail' i.slug %}">{{ i.name }}</a>
                                     </h5>
-
-                                    <p class="fs--1 mb-2" >
-                                        <a class="text-500" href="{% url 'category_products' i.category.slug %}">
-                                            {{ i.category.name }}
-                                        </a>
+                                    <p class="fs--1 mb-2">
+                                        <a class="text-500"
+                                           href="{% url 'category_products' i.category.slug %}">{{ i.category.name }}</a>
                                     </p>
-
-                                    <h5 class="fs-md-2  mb-0 d-flex align-items-center mb-2"
-                                        style="color: red;">
+                                    <h5 class="fs-md-2 mb-0 d-flex align-items-center mb-2" style="color: red;">
                                         {{ i.price }}
                                     </h5>
                                 </div>
-
                             </div>
-
                             <div class="d-flex flex-between-center px-3">
                                 <div>
                                     <a href="{% url 'product_detail' i.slug %}" class="btn btn-danger"
                                        style="height: 30px; width: 105px; font-size: 1rem; display: flex; justify-content: center; align-items: center; padding: 0; background-color: midnightblue; border: none;"
-                                       data-bs-toggle="tooltip"
-                                       data-bs-placement="top"
-                                       title="Add to Cart">
+                                       data-bs-toggle="tooltip" data-bs-placement="top" title="Add to Cart">
                                         <svg class="svg-inline--fa fa-cart-plus fa-w-18" aria-hidden="true"
                                              focusable="false" data-prefix="fas" data-icon="cart-plus" role="img"
                                              xmlns="http://www.w3.org/2000/svg" viewBox="0 0 576 512"
@@ -88,18 +74,43 @@
                                     </a>
                                 </div>
                             </div>
-
                         </div>
                     </div>
                 {% endfor %}
-
-
             </div>
             {% include 'apps/pagination.html' %}
-
-
         </div>
-
-
     </div>
+
+    <style>
+        .product-image {
+            width: 100%; /* Make images responsive */
+            height: 200px; /* Set a fixed height */
+            object-fit: cover; /* Cover the container while maintaining aspect ratio */
+            transition: transform 0.3s; /* Add transition */
+        }
+
+        .category-image {
+            width: 100px; /* Make category images responsive */
+            height: 90px; /* Set a fixed height */
+            object-fit: cover; /* Cover the container while maintaining aspect ratio */
+            transition: transform 0.3s; /* Add transition */
+        }
+
+        .category-row:hover {
+            transform: scale(1.07); /* Scale effect on hover */
+        }
+
+        .product-row:hover {
+            transform: scale(1.05); /* Scale effect on hover */
+        }
+
+        @media (max-width: 768px) {
+            .category-image {
+                height: 80px;
+                width: 90px; /* Adjust height for smaller screens */
+            }
+            
+        }
+    </style>
 {% endblock %}
