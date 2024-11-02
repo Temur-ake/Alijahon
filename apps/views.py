@@ -421,7 +421,7 @@ class TransactionCreateView(CreateView):
 
 class OperatorRequiredMixin(UserPassesTestMixin):
     def test_func(self):
-        return self.request.user.type == User.Type.OPERATOR
+        return self.request.user.type == User.Type.OPERATOR or self.request.user.type == User.Type.MANAGER
 
 
 class OperatorListView(OperatorRequiredMixin, ListView):
