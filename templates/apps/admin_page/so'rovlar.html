@@ -8,47 +8,57 @@
         }
 
         .table {
-            font-size: 1.1rem; 
+            font-size: 1.1rem; /* Base font size for larger screens */
+            margin-bottom: 1rem; /* Space between table and other elements */
+            border-collapse: collapse; /* Collapse borders for table */
         }
 
+        /* General table styling */
+        .table th, .table td {
+            padding: 0.75rem; /* Consistent padding */
+            border: 1px solid #ddd; /* Border for table cells */
+            text-align: left; /* Align text to the left */
+        }
+
+        /* Responsive adjustments for tablets and smaller screens */
         @media (max-width: 768px) {
             .table {
-                font-size: 0.8rem; 
+                font-size: 0.9rem; /* Smaller font size for tablets */
             }
 
-            {#.table thead {#}
-            {#    display: none; /* Hide header for mobile view */#}
-            {#}#}
-
             .table, .table tbody, .table tr, .table td {
-                display: block;
-                width: 100%;
-                margin-bottom: 1rem;
-                border: 1px solid #ddd;
-                border-radius: 0.5rem;
+                display: block; /* Change layout to block for mobile */
+                width: 100%; /* Full width for block elements */
+                margin-bottom: 1rem; /* Space between items */
+                border: none; /* Remove borders for cleaner look */
+                border-radius: 0.5rem; /* Rounded corners */
+                box-shadow: 0 0 5px rgba(0, 0, 0, 0.1); /* Subtle shadow */
             }
 
             .table td {
                 text-align: right; /* Align text to the right */
-                padding-left: 50%;
-                position: relative;
+                padding-left: 50%; /* Space for labels */
+                position: relative; /* Position relative for labels */
+                padding: 0.5rem; /* Adjust padding for smaller screens */
             }
 
             .table td::before {
-                position: absolute;
-                left: 0;
-                width: 50%;
-                padding-left: 1rem;
-                font-weight: bold;
-                {#white-space: nowrap;#}
+                position: absolute; /* Absolute position for labels */
+                left: 0; /* Align to the left */
+                width: 50%; /* Half width for labels */
+                padding-left: 1rem; /* Padding for label */
+                font-weight: bold; /* Bold for clarity */
+                font-size: 0.9rem; /* Smaller font for labels */
+                color: #333; /* Label color */
             }
 
+            /* Labeling for each column */
             .table td:nth-of-type(1)::before {
                 content: "#";
             }
 
             .table td:nth-of-type(2)::before {
-                content: "Buyurtma beruvchi";
+                content: "Operator";
             }
 
             .table td:nth-of-type(3)::before {
@@ -72,11 +82,26 @@
             }
 
             .table td:nth-of-type(8)::before {
-                content: "Buyurtmachi Nomeri";
+                content: "Nomeri";
             }
 
             .table td:nth-of-type(9)::before {
                 content: "Sana";
+            }
+        }
+
+        /* Extra small screens adjustments */
+        @media (max-width: 480px) {
+            .table {
+                font-size: 0.8rem; /* Smaller font size for very small screens */
+            }
+
+            .table td {
+                padding: 0.4rem; /* Further reduce padding for table cells */
+            }
+
+            .table td::before {
+                font-size: 0.8rem; /* Smaller font for labels */
             }
         }
     </style>
@@ -85,8 +110,8 @@
         <div>
             <a class="btn btn-falcon-default btn-sm" href="/admin_page" data-bs-toggle="tooltip"
                data-bs-original-title="Orqaga">
-                <svg class="svg-inline--fa fa-arrow-left fa-w-14"
-                     data-icon="arrow-left" role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512">
+                <svg class="svg-inline--fa fa-arrow-left fa-w-14" data-icon="arrow-left" role="img"
+                     xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512">
                     <path fill="currentColor"
                           d="M257.5 445.1l-22.2 22.2c-9.4 9.4-24.6 9.4-33.9 0L7 273c-9.4-9.4-9.4-24.6 0-33.9L201.4 44.7c9.4-9.4 24.6-9.4 33.9 0l22.2 22.2c9.5 9.5 9.3 25-.4 34.3L136.6 216H424c13.3 0 24 10.7 24 24v32c0 13.3-10.7 24-24 24H136.6l120.5 114.8c9.8 9.3 10 24.8.4 34.3z"></path>
                 </svg>
@@ -124,7 +149,7 @@
                                 <td>{{ order.region.name }}</td>
                                 <td>{{ order.get_status_display }}</td>
                                 <td>{{ order.phone }}</td>
-                                <td>{{ order.created_at|date:"Y-m-d H:i" }}</td>
+                                <td>{{ order.created_at|date:"Y-m-d " }}</td>
                             </tr>
                         {% empty %}
                             <tr>

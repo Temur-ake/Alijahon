@@ -33,16 +33,17 @@
 
                 <div class="row">
                     {% for i in streams %}
-                        <div class="col-sm-4 mb-3">
-                            <div class="card" style="transition: transform 0.3s">
-                                <div class="card-header">
-                                    <h5>{{ i.name }}</h5>
-                                    <h5>- {{ i.discount }}</h5>
+                        <div class="col-md-6 col-sm-6 col-12 mb-3"> <!-- Use col-md-6 for 2 products in one line -->
+                            <div class="card" style="transition: transform 0.3s; padding: 10px;">
+                                <div class="card-header" style="padding: 5px;">
+                                    <h5 style="font-size: 1rem;">{{ i.name }}</h5>
+                                    <h5 style="font-size: 0.8rem;">- {{ i.discount }}</h5>
                                 </div>
-                                <div class="card-body" style="position: relative;">
+                                <div class="card-body" style="position: relative; padding: 10px;">
                                     <div class="form-group">
-                                        <input type="text" value="{{ request.scheme }}://{{ request.get_host }}{% url 'stream_detail' i.pk %}" readonly class="ref_link form-control">
+                                        <input type="text" value="{{ request.scheme }}://{{ request.get_host }}{% url 'stream_detail' i.pk %}" readonly class="ref_link form-control" style="font-size: 0.9rem;">
                                     </div>
+                                    <br>
                                     <button class="copy_ref_bn btn btn-primary" style="background-color: midnightblue; transition: background-color 0.3s, transform 0.2s;"
                                             data-ref="{{ request.scheme }}://{{ request.get_host }}{% url 'stream_detail' i.pk %}">
                                         Nusxa ko'chirish
@@ -121,4 +122,36 @@
             });
         });
     </script>
+
+    <style>
+        @media (max-width: 768px) {
+            .btn {
+                font-size: 0.8rem; /* Smaller font size for buttons */
+                padding: 5px 10px; /* Smaller padding for buttons */
+            }
+
+            .card-header h5, .card-body h5 {
+                font-size: 0.9rem; /* Smaller font size for card headers */
+            }
+
+            .ref_link {
+                font-size: 0.8rem; /* Smaller font size for input */
+            }
+        }
+
+        @media (max-width: 480px) {
+            .btn {
+                font-size: 0.7rem; /* Even smaller font size for buttons */
+                padding: 4px 8px; /* Further reduced padding */
+            }
+
+            .card-header h5, .card-body h5 {
+                font-size: 0.8rem; /* Further reduce font size for headers */
+            }
+
+            .ref_link {
+                font-size: 0.7rem; /* Further reduce font size for input */
+            }
+        }
+    </style>
 {% endblock %}

@@ -145,7 +145,7 @@
                         <tbody>
                         {% for transaction in transactions %}
                             <tr>
-                                <td>{{ transaction.created_at|date:"Y-m-d H:i" }}</td>
+                                <td>{{ transaction.created_at|date:"Y-m-d " }}</td>
                                 <td>{{ transaction.card_number|slice:":4" }}****{{ transaction.card_number|slice:"-4:" }}</td>
                                 <td>{{ transaction.amount }}</td>
                                 <td>{{ transaction.get_status_display }}</td>

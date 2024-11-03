@@ -23,9 +23,35 @@
             transform: scale(1.07); /* Scale effect on hover */
         }
 
+        .product-card h3, .product-card small, .product-card p {
+            margin: 0; /* Remove default margins */
+        }
+
         @media (max-width: 768px) {
             .product-card {
                 margin-bottom: 15px; /* Space between cards on smaller screens */
+            }
+
+            .product-card h3 {
+                font-size: 1.2rem; /* Smaller title font size */
+            }
+
+            .product-card small {
+                font-size: 0.9rem; /* Smaller price font size */
+            }
+
+            .product-card p {
+                font-size: 0.9rem; /* Smaller quantity font size */
+            }
+        }
+
+        @media (max-width: 480px) {
+            .product-card h3 {
+                font-size: 1rem; /* Even smaller title font size */
+            }
+
+            .product-card small, .product-card p {
+                font-size: 0.8rem; /* Further reduce sizes for mobile */
             }
         }
     </style>

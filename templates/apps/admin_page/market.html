@@ -10,11 +10,12 @@
             transition: transform 0.2s;
             display: flex;
             flex-direction: column;
-            height: 100%; /* Ensure cards have same height */
+            height: 100%; /* Ensure cards have the same height */
+            text-align: center; /* Center text for uniformity */
         }
 
         .product-card img {
-            height: 200px; /* Adjust height for better fit */
+            height: 265px; /* Height for larger screens */
             object-fit: cover; /* Maintain aspect ratio */
         }
 
@@ -29,7 +30,7 @@
             }
 
             .product-card img {
-                height: 160px; /* Further reduce image height for smaller screens */
+                height: 120px; /* Further reduce image height for medium screens */
             }
 
             .product-card .card-title {
@@ -37,60 +38,60 @@
             }
 
             .product-card h5 {
-                font-size: 0.8rem; /* Smaller font size for price */
+                font-size: 0.75rem; /* Smaller font size for price */
             }
         }
 
         @media (max-width: 480px) {
             .product-card {
-                padding: 6px; /* Minimal padding */
+                padding: 4px; /* Minimal padding */
             }
 
             .product-card img {
-                height: 120px;
-                width: 120px;/* Minimal image height for very small screens */
+                height: 115px; /* Minimal image height for very small screens */
+                width: 107px; /* Maintain width for very small screens */
             }
 
             .product-card .card-title {
-                font-size: 0.8rem; /* Maintain smaller title font */
+                font-size: 0.75rem; /* Maintain smaller title font */
             }
 
             .product-card h5 {
-                font-size: 0.7rem; /* Further reduce price font size */
+                font-size: 0.6rem; /* Further reduce price font size */
             }
 
             /* Adjust button sizes for small screens */
             .btn {
-                font-size: 0.7rem; /* Smaller font size */
-                padding: 4px 8px; /* Smaller padding */
+                font-size: 0.6rem; /* Smaller font size */
+                padding: 3px 6px; /* Smaller padding */
             }
         }
     </style>
 
     <div class="card mb-3">
         <div class="card-body">
-            <div class="row">
+            <div class="row gx-4"> <!-- Added horizontal gutter spacing -->
                 {% for product in products %}
-                    <div class="col-6 col-sm-6 col-md-4 mb-3">
-                        <!-- 2 products on extra small screens, 3 on medium and larger screens -->
+                    <div class="col-6 col-sm-6 col-md-4 mb-4"> <!-- Adjusted margins -->
                         <div class="product-card">
                             <a href="{% url 'product_detail' product.slug %}" target="_blank">
                                 <img class="card-img-top" src="{{ product.image.url }}" alt="{{ product.name }}">
                             </a>
                             <div class="card-body">
-                                <h5 class="card-title">
+                                <h4 class="card-title">
                                     <a href="{% url 'product_detail' product.slug %}" target="_blank">
                                         {{ product.name }}
                                     </a>
-                                </h5>
-                                <h4 style="color: red">{{ product.price }} so'm</h4>
+                                </h4>
+                                <h5 style="color: red">{{ product.price }} so'm</h5>
                             </div>
 
                             <ul class="list-group list-group-flush">
                                 <li class="list-group-item">To'lov: <strong>{{ product.payment_referral }}</strong></li>
                                 <li class="list-group-item">Zaxirada: <strong>{{ product.quantity }} ta</strong></li>
                                 <li class="list-group-item">Chegirma:
-                                    <strong>{{ product.discount_market|default:"yo'q" }}</strong></li>
+                                    <strong>{{ product.discount_market|default:"yo'q" }}</strong>
+                                </li>
                             </ul>
 
                             <a href="https://t.me/onlinebozor1000xil/" class="btn text-white mt-2"
