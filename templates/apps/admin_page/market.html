@@ -1,53 +1,8 @@
 {% extends 'apps/base.html' %}
-
 {% load category_tags %}
 
 {% block base %}
     <style>
-        .header_menu {
-            padding: 12px;
-        }
-
-        .header_menu .btn-default {
-            border: 1px solid #ddd;
-            border-radius: 20px;
-            padding: 10px 15px; /* Add horizontal padding */
-            font-size: 1rem; /* Use relative units */
-            transition: background-color 0.3s, color 0.3s; /* Smooth transition */
-        }
-
-        .header_menu .btn-default.active,
-        .header_menu .btn-default:hover {
-            background-color: #5e6e82;
-            color: white;
-        }
-
-        /* Responsive adjustments */
-        @media (max-width: 1200px) {
-            .header_menu .btn-default {
-                font-size: 0.9rem; /* Slightly smaller font on medium screens */
-                padding: 8px 12px; /* Adjust padding */
-            }
-        }
-
-        @media (max-width: 768px) {
-            .header_menu {
-                padding: 8px; /* Reduce padding for smaller screens */
-            }
-
-            .header_menu .btn-default {
-                font-size: 0.85rem; /* Smaller font size for mobile */
-                padding: 7px 10px; /* Further reduce padding */
-            }
-        }
-
-        @media (max-width: 480px) {
-            .header_menu .btn-default {
-                font-size: 0.75rem; /* Smallest font size for very small screens */
-                padding: 5px 8px; /* Minimal padding */
-            }
-        }
-
         .product-card {
             padding: 10px;
             border: 1px solid #ddd;
@@ -59,120 +14,99 @@
         }
 
         .product-card img {
-            height: 265px; /* Fixed height for consistent image size */
+            height: 200px; /* Adjust height for better fit */
             object-fit: cover; /* Maintain aspect ratio */
         }
 
         .product-card:hover {
-            transform: scale(1.05); /* Scale effect on hover */
+            transform: scale(1.03); /* Scale effect on hover */
+        }
+
+        /* Responsive adjustments for product cards */
+        @media (max-width: 768px) {
+            .product-card {
+                padding: 8px; /* Reduce padding for smaller screens */
+            }
+
+            .product-card img {
+                height: 160px; /* Further reduce image height for smaller screens */
+            }
+
+            .product-card .card-title {
+                font-size: 0.9rem; /* Smaller font size for titles */
+            }
+
+            .product-card h5 {
+                font-size: 0.8rem; /* Smaller font size for price */
+            }
+        }
+
+        @media (max-width: 480px) {
+            .product-card {
+                padding: 6px; /* Minimal padding */
+            }
+
+            .product-card img {
+                height: 120px;
+                width: 120px;/* Minimal image height for very small screens */
+            }
+
+            .product-card .card-title {
+                font-size: 0.8rem; /* Maintain smaller title font */
+            }
+
+            .product-card h5 {
+                font-size: 0.7rem; /* Further reduce price font size */
+            }
+
+            /* Adjust button sizes for small screens */
+            .btn {
+                font-size: 0.7rem; /* Smaller font size */
+                padding: 4px 8px; /* Smaller padding */
+            }
         }
     </style>
 
     <div class="card mb-3">
         <div class="card-body">
-
-            <!-- Modal -->
-            <div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
-                 aria-hidden="true">
-                <div class="modal-dialog" role="document">
-                    <div class="modal-content">
-                        <div class="modal-header">
-                            <h5 class="modal-title" id="exampleModalLabel">Oqim yaratish</h5>
-                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                                <span aria-hidden="true">&times;</span>
-                            </button>
-                        </div>
-                        <div class="modal-body">
-                            <form action="{% url 'stream_create' %}" method="POST" class="form-class">
-                                {% csrf_token %}
-                                <input name="product" type="hidden" id="hidden_product" value="{{ product.id }}">
-                                <input name="owner" type="hidden" id="hidden_owner" value="{{ user.id }}">
-
-                                Oqim nomi <input type="text" name="name" class="form-control"
-                                                 placeholder="Oqim uchun nom kiriting:" required id="id_title">
-
-                                Chegirma <input type="text" name="discount" class="form-control"
-                                                placeholder="Chegirma miqdorini kiriting: " id="id_discount">
-                                <input type="submit" class="btn btn-primary mt-4" value="Oqim yaratish">
-                            </form>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <div class="container">
-                <br>
-                <br>
-                <h3 class="text-center"> Hozirda sotuvda bor <br> mahsulotlar </h3>
-                {% if messages %}
-                    {% for message in messages %}
-                        <div class="alert alert-danger">{{ message }}</div>
-                    {% endfor %}
-                {% endif %}
-                <br>
-
-                <div class="container border-bottom-4">
-                    <div class="header_tab_menu">
-                        <div class="header_menu" style="overflow: auto">
-                            <a href="{% url 'market_page' %}"
-                               class="btn btn-default {{ request.path|is_current_category }}">
-                                Hammasi </a>
-                            {% for category in categories %}
-                                <a href="?category={{ category.slug }}"
-                                   class="btn btn-default"> {{ category.name }} </a>
-                            {% endfor %}
-                        </div>
-                        <div class="search-box" style="width: 100%;">
-                            <form class="position-relative" style="width: 100%" data-bs-display="static"
-                                  autocomplete="off">
-                                <input id="search-input" name="search" class="form-control search-input" type="search"
-                                       placeholder="Qidiruv..." aria-label="Search"/>
-                                <span class="fas fa-search search-box-icon"></span>
-                            </form>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="row">
-                    {% for product in products %}
-                        <div class="col-sm-6 col-md-4 p-2"> <!-- Adjust column size for better responsiveness -->
-                            <div class="product-card">
-                                <a href="{% url 'product_detail' product.slug %}" target="_blank">
-                                    <img class="card-img-top" src="{{ product.image.url }}" alt="{{ product.name }}">
-                                </a>
-                                <div class="card-body">
-                                    <h5 class="card-title">
-                                        <a href="{% url 'product_detail' product.slug %}" target="_blank">
-                                            {{ product.name }}
-                                        </a>
-                                    </h5>
-                                    <h5 style="color: red">{{ product.price }} so'm</h5>
-                                </div>
-
-                                <ul class="list-group list-group-flush">
-                                    <li class="list-group-item">To'lov: <strong>{{ product.payment_referral }}</strong>
-                                    </li>
-                                    <li class="list-group-item">Zaxirada: <strong>{{ product.quantity }} ta</strong>
-                                    </li>
-                                    <li class="list-group-item">Chegirma:
-                                        <strong>{{ product.discount_market|default:"yo'q" }}</strong></li>
-                                </ul>
-
-                                <a href="https://t.me/onlinebozor1000xil/" class="btn text-white mt-2"
-                                   style="background-color: red">Telegram Postlar</a>
-                                <button class="btn btn-primary btn_open_modal" type="button" data-bs-toggle="modal"
-                                        data-bs-target="#exampleModal" style="background-color: midnightblue"
-                                        name="{{ product.id }}">
-                                    Oqim yaratish
-                                </button>
-                                <a href="{% url 'product_statistics' product.pk %}" class="btn text-white mt-2"
-                                   style="background-color: red">Batafsil</a>
+            <div class="row">
+                {% for product in products %}
+                    <div class="col-6 col-sm-6 col-md-4 mb-3">
+                        <!-- 2 products on extra small screens, 3 on medium and larger screens -->
+                        <div class="product-card">
+                            <a href="{% url 'product_detail' product.slug %}" target="_blank">
+                                <img class="card-img-top" src="{{ product.image.url }}" alt="{{ product.name }}">
+                            </a>
+                            <div class="card-body">
+                                <h5 class="card-title">
+                                    <a href="{% url 'product_detail' product.slug %}" target="_blank">
+                                        {{ product.name }}
+                                    </a>
+                                </h5>
+                                <h4 style="color: red">{{ product.price }} so'm</h4>
                             </div>
-                        </div>
-                    {% endfor %}
 
-                    {% include 'apps/pagination.html' %}
-                </div>
+                            <ul class="list-group list-group-flush">
+                                <li class="list-group-item">To'lov: <strong>{{ product.payment_referral }}</strong></li>
+                                <li class="list-group-item">Zaxirada: <strong>{{ product.quantity }} ta</strong></li>
+                                <li class="list-group-item">Chegirma:
+                                    <strong>{{ product.discount_market|default:"yo'q" }}</strong></li>
+                            </ul>
+
+                            <a href="https://t.me/onlinebozor1000xil/" class="btn text-white mt-2"
+                               style="background-color: red">Postlar</a>
+                            <button class="btn btn-primary btn_open_modal" type="button" data-bs-toggle="modal"
+                                    data-bs-target="#exampleModal" style="background-color: midnightblue"
+                                    name="{{ product.id }}">
+                                Oqim yaratish
+                            </button>
+                            <a href="{% url 'product_statistics' product.pk %}" class="btn text-white mt-2"
+                               style="background-color: red">Batafsil</a>
+                        </div>
+                    </div>
+                {% endfor %}
+
+                {% include 'apps/pagination.html' %}
             </div>
         </div>
     </div>
